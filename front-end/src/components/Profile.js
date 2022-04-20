@@ -9,7 +9,7 @@ export default function Profile() {
       const [loading, setLoading] = useState(false);
   return (
    <div className="container-lg bg-light justify-content-center">
-      <div className="row ">
+      <div className="row  g-3">
       <div className="col-md-9">
       <p>Profile</p>
       </div>

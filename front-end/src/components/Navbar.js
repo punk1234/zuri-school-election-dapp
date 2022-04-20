@@ -6,7 +6,10 @@ function Navbar() {
     providerSignerContext
   );
   return (
-    <nav className="navbar navbar-expand-lg navbar-light" style={{"z-index": "2000;"}}>
+    <nav
+      className="navbar navbar-expand-lg navbar-light bg-body shadow-sm rounded"
+      style={{ "z-index": "2000;" }}
+    >
       <div className="container">
         <Link className="navbar-brand" to={"/"}>
           Home
@@ -37,13 +40,19 @@ function Navbar() {
             </button>
           ) : (
             <div className="navbar-nav ">
-              <Link className="nav-link active" aria-current="page" to={"/vote"}>
+              <Link
+                className="nav-link active"
+                aria-current="page"
+                to={"/vote"}
+              >
                 Vote
               </Link>
               <Link className="nav-link" to={"/profile"}>
                 Profile:
                 {walletConnected &&
-                  `${String(address).slice(0, 5)}..${String(address).slice(-5)}`}
+                  `${String(address).slice(0, 5)}..${String(address).slice(
+                    -5
+                  )}`}
               </Link>
             </div>
           )}
