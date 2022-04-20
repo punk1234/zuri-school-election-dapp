@@ -115,9 +115,12 @@ contract ZuriSchoolVoting {
     // @setup for all the various events carried out on the contract. All events are declared here.
     event StudentCreated(string name, address _student);
     event DirectorCreated(string name, address _director);
-     event StudentCreated(string name, address _student);
     event TeacherCreated(string name, address _teacher);
-    event DirectorCreated(string name, address _director);
+    event BallotCreated(uint256 _id, string name, uint256 time);
+    event voteCasted(uint256 _electionId, address _voter);
+    event BallotStarted(uint256 _id, string name, uint256 time);
+    event BallotStoped(uint256 _id, string name, uint256 time);
+
 
 
     /**
@@ -245,19 +248,60 @@ contract ZuriSchoolVoting {
 
 
     // @function that is used for creating an election either by a teacher or director todo @cptMoh
+    // @dev this function is used for creating an election either by a teacher or director
+    function createElection(string memory _name, uint256 _num_choices, string memory _description, string[] memory _choices, uint256 numHours) public isDirectorOrTeacher {
+        require(_num_choices > 1, "must have more than one choice to create election");
+        require(_num_choices == _choices.length, "number of proposals must equal number of choices");
+    
+        uint _id = electionCount;
+
+        uint expirationTime = block.timestamp + (numHours * (60*60));
+        Election memory _election = Election(_id, _num_choices, _name, _description, false, false);
+        for (uint256 i = 0; i < _num_choices; i++) {
+            Proposal memory _proposal = Proposal(_choices[i], 0);
+            choices[_id].push(_proposal);
+        }
+        timers[electionCount] = expirationTime;
+        elections[_id] = _election;
+        electionCount ++;
+        emit BallotCreated(_id, _name, expirationTime);
+    }
 
 
 
     // @function that is used to cast the vote of an election todo @cptMoh
+    // @dev this function is used to cast the vote of an election
+    function castVote(uint256 _electionId, uint256 _proposalIndex) public {
+        require(elections[_electionId].active == true, "election must be active to cast a vote");
+        require(elections[_electionId].computed == false, "election result has already been computed, can not cast vote");
+        require(timers[_electionId] >= block.timestamp, "election period has expired can not cast vote");
+        require(voters[msg.sender].canVote == true, "you must be allowed to vote to perform this operation");
+        require(hasVoted[_electionId][msg.sender] == false, "you have already voted for this election");
+
+        // cast a vote based on the weight of that specific user type
+        choices[_electionId][_proposalIndex].voteCount += weights[voters[msg.sender].userType];
+        hasVoted[_electionId][msg.sender] = true;
+
+        emit voteCasted(_electionId, msg.sender);
+    }
 
 
 
     // @function used to start an election. should only be called by chairperson todo @cptMoh
-
+    function startElection(uint256 _electionId) public isChairperson{
+        elections[_electionId].active = true;
+        emit BallotStarted(_electionId, elections[_electionId].name, block.timestamp);
+    }
 
 
 
     // @function used to stop an election. should only be called by chairpairson todo @cptMoh
+    // @dev this is a function to stop an election
+    function stopElection(uint256 _electionId) public isChairperson {
+        elections[_electionId].active = false;
+        timers[_electionId] = block.timestamp; 
+        emit BallotStoped(_electionId, elections[_electionId].name, block.timestamp);
+    }
 
 
 
