@@ -1,15 +1,19 @@
 import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
 function Navbar() {
   const { walletConnected, connectWallet, address } = useContext(
     providerSignerContext
   );
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+    <nav
+      className="navbar navbar-expand-lg navbar-light bg-body shadow-sm rounded"
+      style={{ "z-index": "2000;" }}
+    >
       <div className="container">
-        <a className="navbar-brand" href="3">
-          DashBoard
-        </a>
+        <Link className="navbar-brand" to={"/"}>
+          Home
+        </Link>
 
         <button
           className="navbar-toggler"
@@ -36,17 +40,20 @@ function Navbar() {
             </button>
           ) : (
             <div className="navbar-nav ">
-              <a className="nav-link active" aria-current="page" href="3">
-                Home
-              </a>
-              <a className="nav-link" href="3">
-                Features
-              </a>
-              <a className="nav-link" href="3">
+              <Link
+                className="nav-link active"
+                aria-current="page"
+                to={"/vote"}
+              >
+                Vote
+              </Link>
+              <Link className="nav-link" to={"/profile"}>
                 Profile:
                 {walletConnected &&
-                  `${String(address).slice(0, 5)}..${String(address).slice(-5)}`}
-              </a>
+                  `${String(address).slice(0, 5)}..${String(address).slice(
+                    -5
+                  )}`}
+              </Link>
             </div>
           )}
         </div>

@@ -115,10 +115,12 @@ contract ZuriSchoolVoting {
     // @setup for all the various events carried out on the contract. All events are declared here.
     event StudentCreated(string name, address _student);
     event DirectorCreated(string name, address _director);
+    event TeacherCreated(string name, address _teacher);
     event BallotCreated(uint256 _id, string name, uint256 time);
     event voteCasted(uint256 _electionId, address _voter);
     event BallotStarted(uint256 _id, string name, uint256 time);
     event BallotStoped(uint256 _id, string name, uint256 time);
+
 
 
     /**
@@ -206,14 +208,43 @@ contract ZuriSchoolVoting {
 
 
     // @function that returns details about a user whose address is passed todo @KC
+    function whoami(address _voter) public view returns(string memory name, string memory usertype, bool canVote){
+        string memory _usertype = "student";
+        if(voters[_voter].user_type == Stakeholder.TEACHER){
+            _usertype = "teacher";
+        } else if(voters[_voter].user_type == Stakeholder.DIRECTOR){
+            _usertype = "director";
+        }
 
+        return (voters[_voter].name, _usertype, voters[_voter].canVote);
+    }
+
+
+
+    // @function that is used to create a student voter todo @KC
+ function addStudent(string memory _name, address _student) public isChairperson {
+        Voter memory _voter = Voter(_name, true, Stakeholder.STUDENT);
+        voters[_student]  = _voter;
+        addVoter(_student);
+        emit StudentCreated(_name, _student);
+    }
 
     // @function that is used to create a teacher voter todo @KC
-
+ function addTeacher(string memory _name, address _teacher) public isChairperson {
+        Voter memory _voter = Voter(_name, true, Stakeholder.TEACHER);
+        voters[_teacher]  = _voter;
+        addVoter(_teacher);
+        emit TeacherCreated(_name, _teacher);
+    }
 
 
     // @function that is used to create a director voter todo @KC
-
+ function addDirector(string memory _name, address _director) public isChairperson {
+        Voter memory _voter = Voter(_name, true, Stakeholder.DIRECTOR);
+        voters[_director]  = _voter;
+        addVoter(_director);
+        emit DirectorCreated(_name, _director);
+    }
 
 
     // @function that is used for creating an election either by a teacher or director todo @cptMoh
@@ -396,4 +427,6 @@ contract ZuriSchoolVoting {
         emit UnbanVoter(voters[_voter].name, _voter);
     }
 
+
 }
+
