@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 
 import "./App.css";
 import Header from "./components/Header";
+import Loading from "./components/helpers/Loading";
 import Navbar from "./components/Navbar";
 import { providerSignerContext } from "./context/ProviderOrSignerContext";
 function App() {
@@ -78,10 +79,11 @@ function App() {
     <div className="App">
       <Header />
      
-      <button onClick={testing}>Check role</button>
+     <button onClick={testing}>Check role</button>
       <button onClick={grantRole}>Grant role</button>
-      <button onClick={revokeRole}>Revoke role</button>
-      {loading && <p>loading...</p>}
+       <button onClick={revokeRole}>Revoke role</button> 
+       {loading && <Loading />}
+     
     </div>
   );
 }
