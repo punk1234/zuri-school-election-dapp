@@ -230,32 +230,125 @@ contract ZuriSchoolVoting {
 
 
 
-    // @function to get details about an election by providing its id todo @Kosi
+    /**
+     * @notice view the details of an election
+     * @dev view election detailsl
+     * @param _electionId the id of the election you want to view its details
+     */
+    function viewElection(uint256 _electionId) public view returns(string memory name, string[] memory props, bool isActive, bool isComputed){
+        string[] memory proposals = new string[](choices[_electionId].length);
+        for(uint256 i=0; i < choices[_electionId].length; i++){
+            proposals[i] = choices[_electionId][i].name;
+        } 
+        return (elections[_electionId].name, proposals, elections[_electionId].active, elections[_electionId].computed);
+    }
 
 
 
 
-    // @function to view the statistics of a particular election todo @Kosi
+    /**
+     * @notice view the stats of an ongoing or completed election
+     * @dev view election statistics
+     * @param _electionId the id of the election you want to view the statistics of
+     */
+    function viewElectionStats(uint256 _electionId) public view returns(string[] memory names, string[] memory user_types, bool[] memory canVotes, bool[] memory hasVoteds){
+  
+        string[] memory _names = new string[](voter_addresses.length);
+        string[] memory _user_types = new string[](voter_addresses.length);
+        bool[] memory _canVotes = new bool[](voter_addresses.length);
+        bool[] memory _hasVoteds = new bool[](voter_addresses.length);
+
+        for(uint256 i = 0; i < voter_addresses.length; i++){
+            _names[i] = voters[voter_addresses[i]].name;
+            string memory _user_type = "";
+            if(voters[voter_addresses[i]].user_type == Stakeholder.STUDENT){
+                _user_type = "student";
+            } else if (voters[voter_addresses[i]].user_type == Stakeholder.TEACHER){
+                _user_type = "teacher";
+            } else {
+                _user_type = "director";
+            }
+            _user_types[i] = _user_type;
+            _canVotes[i] = voters[voter_addresses[i]].canVote;
+            _hasVoteds[i] = hasVoted[_electionId][voter_addresses[i]];
+        }
+        return (_names, _user_types, _canVotes, _hasVoteds);
+    }
 
 
 
-    // @function used to compile results of an election. should only be called by a director or teacher todo @Kosi
+     /**
+     * @notice compile the results of an election, the election is automatically stopped when the result is compiled
+     * @dev compile election results
+     * @param _electionId the id of the election you want to compile the results for
+     */
+    function compileResults(uint256 _electionId) public isDirectorOrTeacher {
+        stopElection(_electionId);
+        elections[_electionId].computed = true;
+
+        Proposal memory _max = choices[_electionId][0];
+        for(uint256 i = 1; i < choices[_electionId].length; i++){
+          if(choices[_electionId][i].voteCount > _max.voteCount){
+              _max = choices[_electionId][i];
+          }
+        }
+
+        winners[_electionId] = _max;
+        emit BallotResultCompiled(_electionId, elections[_electionId].name, block.timestamp);
+    }
+
+
+    /**
+     * @notice view the results of a completed election
+     * @dev view results of an election
+     * @param _electionId the id of the election you want to view the results for
+     */
+    function viewResult(uint256 _electionId) public view returns(string memory electionName, string memory proposalName, uint256 voteCount){
+        require(elections[_electionId].computed == true, "results have not yet been compiled");
+        return (elections[_electionId].name, winners[_electionId].name, winners[_electionId].voteCount);
+    }
+
+
+    /**
+     * @notice manually set the weights for a particular voter type
+     * @dev adjust voter type vote weights
+     * @param stakeholder is the name of the voter type you want to set the weights for
+     * @param weight is the value you want to set the weight to
+     */
+    function setWeight(string memory stakeholder, uint256 weight) public isChairperson {
+        require(weight >= 0, "weights can not be less than 1");
+        if(stringsEquals(stakeholder,"student")){
+            weights[Stakeholder.STUDENT] = weight;
+        } else if(stringsEquals(stakeholder,"teacher")){
+            weights[Stakeholder.TEACHER] = weight;
+        } else if(stringsEquals(stakeholder,"director")){
+            weights[Stakeholder.DIRECTOR]  = weight;
+        }else {
+            require(false, "invalid stakeholder name entered");
+        }
+    }
+
+
+    /**
+     * @notice ban a voter from participating in elections
+     * @dev ban a voter from voting
+     * @param _voter the voter's wallet address
+     */
+    function banVoter(address _voter) public isChairperson {
+        voters[_voter].canVote = false;
+        emit BanVoter(voters[_voter].name, _voter);
+    }
 
 
 
-    // @function used to view results of an election by taking in the election id. should require the results to have been computed todo @Kosi
-
-
-
-    // @function used to customize the vote weight for the various stakeholders todo @Kosi
-
-
-
-    // @function used to ban a voter from voting on the contract todo @Kosi
-
-
-
-
-    // @function used to unban a voter from voting on the contract todo @Kosi
+    /**
+     * @notice unban a voter from participating in elections
+     * @dev unban a voter from voting
+     * @param _voter the voter's wallet address
+     */
+    function unbanVoter(address _voter) public isChairperson{
+        voters[_voter].canVote = true;
+        emit UnbanVoter(voters[_voter].name, _voter);
+    }
 
 }
