@@ -1,3 +1,4 @@
+import "solidity-coverage";
 import dotenv from "dotenv";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
