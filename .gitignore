@@ -1,2 +1,5 @@
 node_modules
 .env
+smart-contract/cache
+smart-contract/artifacts
+smart-contract/coverage
