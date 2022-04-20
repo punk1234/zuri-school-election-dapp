@@ -3,3 +3,4 @@ node_modules
 smart-contract/cache
 smart-contract/artifacts
 smart-contract/coverage
+coverage.json
