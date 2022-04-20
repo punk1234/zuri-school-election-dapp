@@ -31,5 +31,6 @@ export default function Home() {
   };
   return (
     <Header />
+    // condition to display dashboard
   )
 }

@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
+import NoticeBoard from "./NoticeBoard";
 
 export default function Profile() {
     const { getProviderContractOrSignerContract } = useContext(
@@ -7,6 +8,16 @@ export default function Profile() {
       );
       const [loading, setLoading] = useState(false);
   return (
-    <div>Profile</div>
+   <div className="container-lg bg-light justify-content-center">
+      <div className="row ">
+      <div className="col-md-9">
+      <p>Profile</p>
+      </div>
+      <div className="col-md-3">
+        <NoticeBoard />
+      </div>
+      
+    </div>
+   </div>
   )
 }
