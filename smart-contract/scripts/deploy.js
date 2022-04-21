@@ -1,7 +1,7 @@
 async function main() {
 
     /***********************************************************************
-     ************************* DEPLOY <CONTRACT> ***************************
+     ****************** DEPLOY ZuriSchoolVoting CONTRACT *******************
      ***********************************************************************/
 
     const MainContract = await ethers.getContractFactory("ZuriSchoolVoting");
