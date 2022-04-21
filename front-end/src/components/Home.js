@@ -3,6 +3,7 @@ import React from 'react'
 import Header from './Header'
 import { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
+import TeacherDirector from './Teacher';
 
 export default function Home() {
     const { getProviderContractOrSignerContract, address } = useContext(
@@ -30,7 +31,9 @@ export default function Home() {
     }
   };
   return (
-    <Header />
-    // condition to display dashboard
+    <div>
+        <Header />
+        <TeacherDirector />
+    </div>
   )
 }
