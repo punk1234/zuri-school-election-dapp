@@ -195,7 +195,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
     }
 
     // @dev this function is used to cast the vote of an election
-    function castVote(uint256 _electionId, uint256 _proposalIndex) public {
+    function castVote(uint256 _electionId, uint256 _proposalIndex) external {
         require(elections[_electionId].active == true, "election must be active to cast a vote");
         require(elections[_electionId].computed == false, "election result has already been computed, can not cast vote");
         require(timers[_electionId] >= block.timestamp, "election period has expired can not cast vote");
@@ -210,7 +210,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
     }
 
     // @function used to start an election. should only be called by chairperson todo @cptMoh
-    function startElection(uint256 _electionId) public isChairperson{
+    function startElection(uint256 _electionId) external isChairperson{
         elections[_electionId].active = true;
         
         emit BallotStarted(_electionId, elections[_electionId].name, block.timestamp);
@@ -219,9 +219,9 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
     // @dev this is a function to stop an election
     function stopElection(uint256 _electionId) public isChairperson {
         elections[_electionId].active = false;
-        timers[_electionId] = block.timestamp; 
+        timers[_electionId] = block.timestamp;
 
-        emit BallotStoped(_electionId, elections[_electionId].name, block.timestamp);
+        emit BallotStopped(_electionId, elections[_electionId].name, block.timestamp);
     }
 
     /**
@@ -229,9 +229,14 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @dev view election detailsl
      * @param _electionId the id of the election you want to view its details
      */
-    function viewElection(uint256 _electionId) public view returns(string memory name, string[] memory props, bool isActive, bool isComputed){
+    function viewElection(uint256 _electionId) external view  returns(
+        string memory name, 
+        string[] memory props, 
+        bool isActive, 
+        bool isComputed
+    ) {
         string[] memory proposals = new string[](choices[_electionId].length);
-        for(uint256 i=0; i < choices[_electionId].length; i++){
+        for(uint256 i=0; i < choices[_electionId].length; i++) {
             proposals[i] = choices[_electionId][i].name;
         } 
         return (elections[_electionId].name, proposals, elections[_electionId].active, elections[_electionId].computed);
@@ -242,7 +247,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @dev view election statistics
      * @param _electionId the id of the election you want to view the statistics of
      */
-    function viewElectionStats(uint256 _electionId) public view returns(
+    function viewElectionStats(uint256 _electionId) external view returns(
         string[] memory names, 
         string[] memory user_types, 
         bool[] memory canVotes, 
@@ -272,12 +277,12 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         return (_names, _user_types, _canVotes, _hasVoteds);
     }
 
-     /**
+    /**
      * @notice compile the results of an election, the election is automatically stopped when the result is compiled
      * @dev compile election results
      * @param _electionId the id of the election you want to compile the results for
      */
-    function compileResults(uint256 _electionId) public isDirectorOrTeacher {
+    function compileResults(uint256 _electionId) external isDirectorOrTeacher {
         stopElection(_electionId);
         elections[_electionId].computed = true;
 
@@ -297,7 +302,11 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @dev view results of an election
      * @param _electionId the id of the election you want to view the results for
      */
-    function viewResult(uint256 _electionId) public view returns(string memory electionName, string memory proposalName, uint256 voteCount){
+    function viewResult(uint256 _electionId) public view returns(
+        string memory electionName, 
+        string memory proposalName, 
+        uint256 voteCount
+    ) {
         require(elections[_electionId].computed == true, "results have not yet been compiled");
         return (elections[_electionId].name, winners[_electionId].name, winners[_electionId].voteCount);
     }
@@ -311,13 +320,13 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
     function setWeight(string memory stakeholder, uint256 weight) external isChairperson {
         require(weight > 0, "weights can not be less than 1");
 
-        if(_stringsEquals(stakeholder,"student")){
+        if(_stringsEquals(stakeholder,"student")) {
             weights[Stakeholder.STUDENT] = weight;
-        } else if(_stringsEquals(stakeholder,"teacher")){
+        } else if(_stringsEquals(stakeholder,"teacher")) {
             weights[Stakeholder.TEACHER] = weight;
-        } else if(_stringsEquals(stakeholder,"director")){
+        } else if(_stringsEquals(stakeholder,"director")) {
             weights[Stakeholder.DIRECTOR]  = weight;
-        }else {
+        } else {
             require(false, "invalid stakeholder name entered");
         }
     }
@@ -337,7 +346,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @dev unban a voter from voting
      * @param _voter the voter's wallet address
      */
-    function unbanVoter(address _voter) public isChairperson{
+    function unbanVoter(address _voter) external isChairperson{
         voters[_voter].canVote = true;
         emit UnbanVoter(voters[_voter].name, _voter);
     }
