@@ -15,7 +15,7 @@ abstract contract VotingEvents {
     event DirectorCreated(string name, address _director);
 
     event BallotStarted(uint256 _id, string name, uint256 time);
-    event BallotStoped(uint256 _id, string name, uint256 time);
+    event BallotStopped(uint256 _id, string name, uint256 time);
 
     event BallotCreated(uint256 _id, string name, uint256 time);
     event BallotResultCompiled(uint256 _id, string name, uint256 time);
