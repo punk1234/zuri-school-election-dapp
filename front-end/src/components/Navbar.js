@@ -8,7 +8,7 @@ function Navbar() {
   return (
     <nav
       className="navbar navbar-expand-lg navbar-light bg-body shadow-sm rounded"
-      style={{ "z-index": "2000;" }}
+     
     >
       <div className="container">
         <Link className="navbar-brand" to={"/"}>
