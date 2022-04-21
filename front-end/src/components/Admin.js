@@ -5,6 +5,7 @@ export default function Admin() {
   const { getProviderContractOrSignerContract } = useContext(
     providerSignerContext
   );
+
   const [loading, setLoading] = useState(false);
   const [directorDetails, setDirectorDetails] = useState({});
   const [teacherDetails, setTeacherDetails] = useState({});
@@ -31,12 +32,12 @@ export default function Admin() {
         );
       });
     } catch (err) {
-     if(err.error == undefined) {
-        console.log("not connected")
+      if (err.error === undefined) {
+        console.log("not connected");
       } else {
         console.error(err.error);
       }
-      
+
       setLoading(false);
     }
   };
@@ -69,12 +70,12 @@ export default function Admin() {
         );
       });
     } catch (err) {
-      if(err.error == undefined) {
-        console.log("not connected")
+      if (err.error === undefined) {
+        console.log("not connected");
       } else {
         console.error(err.error);
       }
-      
+
       setLoading(false);
     }
   };
@@ -107,14 +108,12 @@ export default function Admin() {
         );
       });
     } catch (err) {
-      
       setLoading(false);
-      if(err.error == undefined) {
-        console.log("not connected")
+      if (err.error === undefined) {
+        console.log("not connected");
       } else {
         console.error(err.error);
       }
-      
     }
   };
   const handleStudentInputs = (event) => {
@@ -137,16 +136,13 @@ export default function Admin() {
       tx.wait();
       setLoading(false);
       console.log(tx);
-    
     } catch (err) {
       setLoading(false);
-      if(err.error == undefined) {
-        console.log("not connected")
+      if (err.error === undefined) {
+        console.log("not connected");
       } else {
         console.error(err.error.message);
       }
-      
-      
     }
   };
   const handleWeightInputs = (event) => {
@@ -160,7 +156,6 @@ export default function Admin() {
   return (
     <div className="container">
       <h2>Chairman</h2>
-
       <div className="my-4">
         Add Director
         <form onSubmit={handleDirector}>
@@ -186,7 +181,6 @@ export default function Admin() {
           <button type="submit">Add Director</button>
         </form>
       </div>
-
       {/* teacher  */}
       <div className="my-4">
         Add Teacher
@@ -213,7 +207,6 @@ export default function Admin() {
           <button type="submit">Add Teacher</button>
         </form>
       </div>
-
       {/* student section  */}
       <div className="my-4">
         Add Student
@@ -240,19 +233,17 @@ export default function Admin() {
           <button type="submit">Add Student</button>
         </form>
       </div>
-
       {/* set weight  */}
       <div className="my-4">
         Set Weight
         <form onSubmit={handleWeight}>
           <label>Stake holder: </label>
           <select
-            
             value={weight.stakeHolder || ""}
             onChange={handleWeightInputs}
             name="stakeHolder"
           >
-          <option value="">-select a stake holder-</option>
+            <option value="">-select a stake holder-</option>
             <option value="student">student</option>
             <option value="teacher">teacher</option>
             <option value="director">director</option>
@@ -271,6 +262,9 @@ export default function Admin() {
           <button type="submit">set weight</button>
         </form>
       </div>
+
+    {/* section for showing election   */}
+
     </div>
   );
 }
