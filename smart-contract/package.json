@@ -8,7 +8,7 @@
     "deploy": "npx hardhat run ./scripts/deploy.js",
     "verify": "npx hardhat verify",
     "test": "npx hardhat test ./tests/*.spec.ts",
-    "test:coverage": "npx hardhat coverage --network localhost"
+    "test:coverage": "npx hardhat coverage --network localhost --testfiles './tests/**.spec.ts'"
   },
   "keywords": [],
   "author": "Blockgames <Team-E>",

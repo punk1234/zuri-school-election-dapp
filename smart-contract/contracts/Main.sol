@@ -46,13 +46,13 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
     mapping(Stakeholder => uint256) weights;
 
     // @dev this is used to keep track of the timers for the various elections
-    mapping(uint256=>uint256) timers;
+    mapping(uint256 => uint256) timers;
 
     // @dev this is used to keep track of the winnig proposal for each election
-    mapping(uint256=>Proposal) winners;
+    mapping(uint256 => Proposal) winners;
     
     // @dev this is a mapping to track the choices for various elections
-    mapping(uint256=>Proposal[]) choices;
+    mapping(uint256 => Proposal[]) choices;
 
     
     /**
@@ -92,23 +92,31 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @param _student student wallet address
      */
     function addStudent(string memory _name, address _student) external isChairperson {
+        require(bytes(_name).length > 0, "student name is not valid");
+        require(bytes(voters[_student].name).length == 0, "student already exist");
+
         Voter memory _voter = Voter(_name, true, Stakeholder.STUDENT);
         _addVoter(_student, _voter);
 
         emit StudentCreated(_name, _student);
     }
 
-    // @function that is used to create a teacher voter todo @KC
+    // @function that is used to create a teacher voter
     function addTeacher(string memory _name, address _teacher) public isChairperson {
+        require(bytes(_name).length > 0, "teacher name is not valid");
+        require(bytes(voters[_teacher].name).length == 0, "teacher already exist");
+
         Voter memory _voter = Voter(_name, true, Stakeholder.TEACHER);
         _addVoter(_teacher, _voter);
 
         emit TeacherCreated(_name, _teacher);
     }
 
-
-    // @function that is used to create a director voter todo @KC
+    // @function that is used to create a director voter
     function addDirector(string memory _name, address _director) public isChairperson {
+        require(bytes(_name).length > 0, "director name is not valid");
+        require(bytes(voters[_director].name).length == 0, "director already exist");
+
         Voter memory _voter = Voter(_name, true, Stakeholder.DIRECTOR);
         _addVoter(_director, _voter);
 
@@ -155,17 +163,18 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
 
     // @function that returns details about a user whose address is passed todo @KC
     function whoami(address _voter) public view returns(string memory name, string memory usertype, bool canVote){
-        string memory _usertype = "student";
-        if(voters[_voter].userType == Stakeholder.TEACHER){
-            _usertype = "teacher";
-        } else if(voters[_voter].userType == Stakeholder.DIRECTOR){
-            _usertype = "director";
+        string memory _userType = "student";
+
+        if(voters[_voter].userType == Stakeholder.TEACHER) {
+            _userType = "teacher";
+        }
+        else if(voters[_voter].userType == Stakeholder.DIRECTOR) {
+            _userType = "director";
         }
 
-        return (voters[_voter].name, _usertype, voters[_voter].canVote);
+        return (voters[_voter].name, _userType, voters[_voter].canVote);
     }
 
-    // @function that is used for creating an election either by a teacher or director todo @cptMoh
     // @dev this function is used for creating an election either by a teacher or director
     function createElection(
         string memory _name, 
@@ -179,8 +188,8 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         require(_num_choices == _choices.length, "number of proposals must equal number of choices");
     
         uint _id = electionCount;
-
         uint expirationTime = block.timestamp + (numHours * (60*60));
+
         Election memory _election = Election(_id, _num_choices, _name, _description, false, false);
         for (uint256 i = 0; i < _num_choices; i++) {
             Proposal memory _proposal = Proposal(_choices[i], 0);
@@ -210,7 +219,9 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
     }
 
     // @function used to start an election. should only be called by chairperson todo @cptMoh
-    function startElection(uint256 _electionId) external isChairperson{
+    function startElection(uint256 _electionId) external isChairperson {
+        require(!elections[_electionId].active, "already started election cannot be started again");
+
         elections[_electionId].active = true;
         
         emit BallotStarted(_electionId, elections[_electionId].name, block.timestamp);
@@ -218,6 +229,8 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
 
     // @dev this is a function to stop an election
     function stopElection(uint256 _electionId) public isChairperson {
+        require(elections[_electionId].active, "already stopped election cannot be stopped again");
+
         elections[_electionId].active = false;
         timers[_electionId] = block.timestamp;
 
@@ -229,7 +242,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @dev view election detailsl
      * @param _electionId the id of the election you want to view its details
      */
-    function viewElection(uint256 _electionId) external view  returns(
+    function viewElection(uint256 _electionId) external view returns(
         string memory name, 
         string[] memory props, 
         bool isActive, 
@@ -239,7 +252,12 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         for(uint256 i=0; i < choices[_electionId].length; i++) {
             proposals[i] = choices[_electionId][i].name;
         } 
-        return (elections[_electionId].name, proposals, elections[_electionId].active, elections[_electionId].computed);
+        return (
+            elections[_electionId].name, 
+            proposals, 
+            elections[_electionId].active, 
+            elections[_electionId].computed
+        );
     }
 
     /**
@@ -318,17 +336,39 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @param weight is the value you want to set the weight to
      */
     function setWeight(string memory stakeholder, uint256 weight) external isChairperson {
-        require(weight > 0, "weights can not be less than 1");
+        require(weight > 0 && weight <= 10, "weights can only take values 1 to 10");
 
         if(_stringsEquals(stakeholder,"student")) {
             weights[Stakeholder.STUDENT] = weight;
-        } else if(_stringsEquals(stakeholder,"teacher")) {
+        } 
+        else if(_stringsEquals(stakeholder,"teacher")) {
             weights[Stakeholder.TEACHER] = weight;
-        } else if(_stringsEquals(stakeholder,"director")) {
+        } 
+        else if(_stringsEquals(stakeholder,"director")) {
             weights[Stakeholder.DIRECTOR]  = weight;
-        } else {
+        }
+        else {
             require(false, "invalid stakeholder name entered");
         }
+    }
+
+    /**
+     * @notice get the weights for a particular voter type
+     * @dev adjust voter type vote weights
+     * @param stakeholder is the name of the voter type you want to get the weights for
+     */
+    function getWeight(string memory stakeholder) external view isChairperson returns(uint256) {
+        if(_stringsEquals(stakeholder,"student")) {
+            return weights[Stakeholder.STUDENT];
+        }
+        else if(_stringsEquals(stakeholder,"teacher")) {
+            return weights[Stakeholder.TEACHER];
+        }
+        else if(_stringsEquals(stakeholder,"director")) {
+            return weights[Stakeholder.DIRECTOR];
+        }
+        
+        require(false, "invalid stakeholder name entered");
     }
 
     /**
