@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { resultContext } from '../context/ViewResultContext'
 
 export default function NoticeBoard() {
+  const { electionResult } = useContext(resultContext)
   return (
    <div className='row'>
      <div className="col-12 rounded">

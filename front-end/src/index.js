@@ -5,6 +5,8 @@ import App from './App';
 
 import reportWebVitals from './reportWebVitals';
 import ProviderOrSignerContext from './context/ProviderOrSignerContext';
+import ViewResultContext from './context/ViewResultContext';
+import ViewElectionContext from './context/ViewElectionContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -12,9 +14,12 @@ root.render(
    
 
     <ProviderOrSignerContext>
+    <ViewElectionContext>
+    <ViewResultContext>
   
     <App />
- 
+    </ViewResultContext>
+ </ViewElectionContext>
     </ProviderOrSignerContext>
    
   </React.StrictMode>

@@ -1,39 +1,30 @@
-
-import React from 'react'
-import Header from './Header'
+import React from "react";
+import Header from "./Header";
 import { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
-import TeacherDirector from './Teacher';
+import TeacherDirector from "./Teacher";
+import Admin from "./Admin";
+import NoticeBoard from "./NoticeBoard";
 
 export default function Home() {
-    const { getProviderContractOrSignerContract, address } = useContext(
-        providerSignerContext
-      );
-      const [loading, setLoading] = useState(false);
-      ///sample code of how to use it
-  const testing = async () => {
-    //
+  const { getProviderContractOrSignerContract, address } = useContext(
+    providerSignerContext
+  );
+  const [loading, setLoading] = useState(false);
+  ///sample code of how to use it
 
-    try {
-      const providerContract = await getProviderContractOrSignerContract();
-
-      setLoading(true);
-      const tx = await providerContract.roles(
-        "USER",
-        address
-      );
-      // tx.wait() is only used for signer
-      setLoading(false);
-      console.log(tx);
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
-    }
-  };
   return (
-    <div>
-        <Header />
-        <TeacherDirector />
+    <div className="container-lg bg-light justify-content-center">
+      <div className="row  g-3">
+        <div className="col-md-9">
+          {/* <Header /> */}
+          <TeacherDirector />
+          {/* <Admin /> */}
+        </div>
+        <div className="col-md-3">
+          <NoticeBoard />
+        </div>
+      </div>
     </div>
-  )
+  );
 }
