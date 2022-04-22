@@ -6,6 +6,7 @@ import NotFound from "./components/404NotFound";
 import Profile from "./components/Profile";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Dashboard from "./components/Dashboard";
 ;
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
     <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route path="profile" element={<Profile />} />
         <Route path="*" element={<NotFound />}/>
       </Routes>

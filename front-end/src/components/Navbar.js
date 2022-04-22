@@ -43,9 +43,9 @@ function Navbar() {
               <Link
                 className="nav-link active"
                 aria-current="page"
-                to={"/vote"}
+                to={"/dashboard"}
               >
-                Vote
+                Dashboad
               </Link>
               <Link className="nav-link" to={"/profile"}>
                 Profile:

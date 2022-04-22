@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "./Header";
+import Carousel from "./helpers/Carousel"
 import { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
 import TeacherDirector from "./Teacher";
@@ -14,17 +14,11 @@ export default function Home() {
   ///sample code of how to use it
 
   return (
-    <div className="container-lg bg-light justify-content-center">
-      <div className="row  g-3">
-        <div className="col-md-9">
-          {/* <Header /> */}
-          <TeacherDirector />
-          {/* <Admin /> */}
-        </div>
-        <div className="col-md-3">
-          <NoticeBoard />
-        </div>
-      </div>
-    </div>
+   <div>
+    <Carousel />
+     <div className="container-lg bg-light justify-content-center">
+      <h4>Welcome</h4>
+     </div>
+   </div>
   );
 }
