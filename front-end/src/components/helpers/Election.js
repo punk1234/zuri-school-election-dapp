@@ -51,6 +51,7 @@ export default function Election() {
   });
   return (
     <div className="row justify-content-center">
+    <h3>Voting Section</h3>
       {viewElectionResponse <= 0 && <Loading />}
       {displayElection}
     </div>
