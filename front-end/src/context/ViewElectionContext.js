@@ -43,6 +43,20 @@ const ViewElectionContext = (props) => {
     }
   };
 
+  const whoami = async () => {
+    try {
+      // let contract = getProviderContractOrSignerContract()
+      const contract = await getProviderContractOrSignerContract();
+     const tx = await contract.whoami(address)
+    } catch (err) {
+      if (err.error === undefined) {
+        console.log("not connected");
+      } else {
+        console.error(err.error);
+      }
+    }
+  };
+
   //get charman address
   const getChairmanAddress = async () => {
     try {
