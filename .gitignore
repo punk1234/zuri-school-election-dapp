@@ -4,3 +4,4 @@ smart-contract/cache
 smart-contract/artifacts
 smart-contract/coverage
 coverage.json
+.DS_Store

@@ -70,3 +70,5 @@ For Front-end App;
 npm test
 npm test:coverage (SMART-CONTRACT)
 ```
+
+![SMART-CONTRACT TEST-COVERAGE](./docs/images/SMART_CONTRACT_TEST_COVERAGE.png)
