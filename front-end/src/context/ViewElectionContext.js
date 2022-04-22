@@ -11,6 +11,9 @@ const ViewElectionContext = (props) => {
   const [showStartElection, setShowStartElection] = useState("");
   const [showStopElection, setShowStopElection] = useState("");
   const [chairmanAddress, setChairmainAddress] = useState("")
+  const [showBanVoter, setShowBanVoter] = useState("")
+  const [showUnBanVoter, setShowUnBanVoter] = useState("")
+
 
   //profile details
   const [profileDetails, setProfileDetails] = useState(null)
@@ -92,6 +95,25 @@ const getUserAddressDetails =  useCallback(async (address) => {
       }
     }
   };
+//stop election
+  const stopElection = async (electionId) => {
+    //for starting election and stoping election
+
+    try {
+      // let contract = getProviderContractOrSignerContract()
+      const contract = await getProviderContractOrSignerContract(true);
+
+      let tx = await contract.stopElection(electionId);
+      console.log("election stopped", tx);
+      setShowStopElection(`The election with id ${electionId} has stoped`);
+    } catch (err) {
+      if (err.error === undefined) {
+        console.log("not connected");
+      } else {
+        console.error(err.error);
+      }
+    }
+  };
 
   //compile result
   const compileResults = async (electionId) => {
@@ -130,25 +152,7 @@ const getUserAddressDetails =  useCallback(async (address) => {
     }
   };
 
-//stop election
-  const stopElection = async (electionId) => {
-    //for starting election and stoping election
-
-    try {
-      // let contract = getProviderContractOrSignerContract()
-      const contract = await getProviderContractOrSignerContract(true);
-
-      let tx = await contract.stopElection(electionId);
-      console.log("election stopped", tx);
-      setShowStopElection(`The election with id ${electionId} has stoped`);
-    } catch (err) {
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
-    }
-  };
+// ban and un ban
 
   electionCount();
   useEffect(() => {
@@ -192,6 +196,10 @@ const getUserAddressDetails =  useCallback(async (address) => {
         profileDetails,
         compileResults,
         castVote,
+        banVote,
+        unbanVoter,
+        showBanVoter,
+        showUnBanVoter,
         chairmanAddress,
         showStartElection,
         showStopElection,
