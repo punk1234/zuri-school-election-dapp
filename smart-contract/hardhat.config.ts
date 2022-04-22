@@ -2,6 +2,7 @@ import "solidity-coverage";
 import dotenv from "dotenv";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-ganache";
 import "@nomiclabs/hardhat-etherscan";
 
 dotenv.config();
@@ -22,5 +23,6 @@ module.exports = {
     },
     etherscan: {
         apiKey: ETHERSCAN_API_KEY
-    }
+    },
+    mocha: { timeout: 80000 }
 };

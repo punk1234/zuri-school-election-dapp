@@ -33,10 +33,10 @@ abstract contract VotingAccess {
      ********************************************************************************************/
 
     // @dev this is used to assert that the person calling a contract method is a student
-    modifier isStudent() {
-       require(voters[msg.sender].userType == Stakeholder.STUDENT, "only students can perform this operation");
-       _;
-    }
+    // modifier isStudent() {
+    //    require(voters[msg.sender].userType == Stakeholder.STUDENT, "only students can perform this operation");
+    //    _;
+    // }
 
     // @dev this is used to assert that the person calling a contract method is the chairperson
     modifier isChairperson(){
@@ -45,16 +45,16 @@ abstract contract VotingAccess {
     }
 
     // @dev this is used to assert that the person calling a contract method is a teacher
-    modifier isTeacher(){
-        require(voters[msg.sender].userType == Stakeholder.TEACHER, "only teachers can perform this operation");
-        _;
-    }
+    // modifier isTeacher(){
+    //     require(voters[msg.sender].userType == Stakeholder.TEACHER, "only teachers can perform this operation");
+    //     _;
+    // }
 
     // @dev this is used to assert that the person calling a contract method is a director
-    modifier isDirector(){
-        require(voters[msg.sender].userType == Stakeholder.DIRECTOR, "only director can perform this operation");
-        _;
-    }
+    // modifier isDirector(){
+    //     require(voters[msg.sender].userType == Stakeholder.DIRECTOR, "only director can perform this operation");
+    //     _;
+    // }
 
     // @dev this is used to assert that the person calling the method is either a director or a teacher
     modifier isDirectorOrTeacher(){
