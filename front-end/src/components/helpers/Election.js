@@ -4,8 +4,14 @@ import { electionContext } from "../../context/ViewElectionContext";
 import Loading from "./Loading";
 
 export default function Election() {
-  const { viewElectionResponse, startElection, stopElection, chairmanAddress } =
-    useContext(electionContext);
+  const {
+    viewElectionResponse,
+    startElection,
+    stopElection,
+    chairmanAddress,
+    compileResults,
+    castVote,
+  } = useContext(electionContext);
   const { address } = useContext(providerSignerContext);
   const displayElection = viewElectionResponse.map((val) => {
     return (
@@ -18,8 +24,17 @@ export default function Election() {
           <ul class="list-group list-group-flush">
             {val.proposals.map((prop) => {
               return (
-                <li key={prop} class="list-group-item">
+                <li
+                  key={prop}
+                  class="list-group-item d-flex justify-content-between"
+                >
                   {prop}
+                  <button
+                    onClick={() => castVote(val.id)}
+                    className="btn btn-secondary btn-sm"
+                  >
+                    vote
+                  </button>
                 </li>
               );
             })}
@@ -42,6 +57,12 @@ export default function Election() {
                     Start Eection
                   </button>
                 )}
+                <button
+                  onClick={() => compileResults(val.id)}
+                  className="btn btn-secondary btn-sm"
+                >
+                  compile Result
+                </button>
               </div>
             )}
           </div>
@@ -51,7 +72,7 @@ export default function Election() {
   });
   return (
     <div className="row justify-content-center">
-    <h3>Voting Section</h3>
+      <h3>Voting Section</h3>
       {viewElectionResponse <= 0 && <Loading />}
       {displayElection}
     </div>
