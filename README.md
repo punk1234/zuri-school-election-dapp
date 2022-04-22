@@ -39,9 +39,12 @@ git clone {{ GITHUB_REPOSITORY_URL }}
 cd zuri-school-election-app
 
 For Smart-contract App;
+
 cd zuri-school-election-app/smart-contract
 
+
 For Front-end App;
+
 cd zuri-school-election-app/front-end
 ```
 
@@ -58,8 +61,8 @@ Check sample.env file (SMART-CONTRACT APP)
 - Start Application
 ```
 For Smart-contract App;
-npm run deploy
-npm run verify
+- npm run deploy
+- npm run verify
 
 For Front-end App;
 - npm start
@@ -70,3 +73,5 @@ For Front-end App;
 npm test
 npm test:coverage (SMART-CONTRACT)
 ```
+
+![SMART-CONTRACT TEST-COVERAGE](./docs/images/SMART_CONTRACT_TEST_COVERAGE.png)
