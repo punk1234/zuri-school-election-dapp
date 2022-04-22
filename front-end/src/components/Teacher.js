@@ -4,6 +4,7 @@ import { BigNumber } from "ethers";
 import { resultContext } from "../context/ViewResultContext";
 import { electionContext } from "../context/ViewElectionContext";
 import Loading from "./helpers/Loading"
+import Election from "./helpers/Election"
 export default function TeacherDirector() {
   const { getProviderContractOrSignerContract } = useContext(
     providerSignerContext
@@ -140,11 +141,7 @@ export default function TeacherDirector() {
         </form>
       </div>
       <div className="col-md-8">
-        <div className="view-election-container">
-          <h1>View Election</h1>
-
-          <button onClick={viewElection}>View Election</button>
-        </div>
+        <Election />
 
         <div className="cast-vote-container">
           <h1>Cast Vote</h1>
