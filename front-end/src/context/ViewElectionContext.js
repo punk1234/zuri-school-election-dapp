@@ -3,7 +3,7 @@ import { providerSignerContext } from "./ProviderOrSignerContext";
 
 export const electionContext = createContext();
 const ViewElectionContext = (props) => {
-  const { getProviderContractOrSignerContract, address } = useContext(
+  const { getProviderContractOrSignerContract, address, walletConnected } = useContext(
     providerSignerContext
   );
   const [viewElectionResponse, setViewElectionResponse] = useState([]);
@@ -144,7 +144,7 @@ const getUserAddressDetails =  useCallback(async (address) => {
       }
     };
     viewElection();
-  }, [totalElection]);
+  }, [totalElection, walletConnected]);
   return (
     <electionContext.Provider
       value={{
