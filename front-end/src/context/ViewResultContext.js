@@ -8,7 +8,7 @@ export default function ViewResultContext(props) {
     providerSignerContext
   );
 
-        const [electionResult, setElectionResult] = useState({})
+        const [electionResult, setElectionResult] = useState([])
 
     // function to view the results of an election
     const viewResult = async (electionId) => {
@@ -24,7 +24,9 @@ export default function ViewResultContext(props) {
                 proposalName: tx.proposalName,
                 voteCount: tx.voteCount.toNumber(),
             }
-            setElectionResult(response)    
+            setElectionResult(prevState => {
+              return [...prevState, response]
+            })
         }
         catch(err){
             if (err.error === undefined) {

@@ -19,7 +19,7 @@ export default function Election() {
         <div className="card">
           <div class="card-body">
             <h5 class="card-title">{val.name}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Proposals</h6>
+            <h6 class="card-subtitle mt-2 text-muted">Proposals</h6>
           </div>
           <ul class="list-group list-group-flush">
             {val.proposals.map((prop) => {

@@ -1,12 +1,10 @@
-import { useContext, useState } from "react";
-import { providerSignerContext } from "../context/ProviderOrSignerContext";
+import { useContext } from "react";
+import { electionContext } from "../context/ViewElectionContext";
 import NoticeBoard from "./NoticeBoard";
 
 export default function Profile() {
-  const { getProviderContractOrSignerContract } = useContext(
-        providerSignerContext
-      );
-  const [loading, setLoading] = useState(false);
+
+  const { profileDetails } = useContext(electionContext)
 
   return (
     <div className="container-lg bg-light justify-content-center">
