@@ -43,4 +43,33 @@ describe("VOTE TESTS", function () {
 
   });
 
+  describe("setWeight TESTS", async () => {
+
+    it("Check that error is thrown when trying to set vote weight for stakeholder type that does not exist", async function () {
+        await expect(zuriVotingContract.setWeight("UNKNOWN-STAKEHOLDER-TYPE", 5))
+            .to.be.revertedWith("invalid stakeholder name entered");
+    });
+
+    it("Check that error is thrown when trying to set stakeholder vote weight with out-of-bounds value", async function () {
+        await expect(zuriVotingContract.setWeight("teacher", 12))
+            .to.be.revertedWith("weights can only take values 1 to 10");
+    });
+
+    it("Check that setting vote weight for stakeholder type with valid inputs gives no error", async function () {
+        await zuriVotingContract.setWeight("student", 3);
+
+        expect(await zuriVotingContract.getWeight("student")).to.equal(3);
+    });
+
+  });
+
+  describe("getWeight TESTS", async () => {
+
+    it("Check that error is thrown when trying to get vote weight for stakeholder type that does not exist", async function () {
+        await expect(zuriVotingContract.getWeight("UNKNOWN-STAKEHOLDER-TYPE"))
+            .to.be.revertedWith("invalid stakeholder name entered");
+    });
+
+  });
+
 });

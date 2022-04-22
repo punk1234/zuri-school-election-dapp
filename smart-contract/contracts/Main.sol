@@ -272,17 +272,17 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         bool[] memory hasVoteds
     ) {
         string[] memory _names = new string[](voterAddresses.length);
-        string[] memory _user_types = new string[](voterAddresses.length);
         bool[] memory _canVotes = new bool[](voterAddresses.length);
         bool[] memory _hasVoteds = new bool[](voterAddresses.length);
+        string[] memory _user_types = new string[](voterAddresses.length);
 
         for(uint256 i = 0; i < voterAddresses.length; i++){
             _names[i] = voters[voterAddresses[i]].name;
             string memory _user_type = "";
 
-            if(voters[voterAddresses[i]].userType == Stakeholder.STUDENT){
+            if(voters[voterAddresses[i]].userType == Stakeholder.STUDENT) {
                 _user_type = "student";
-            } else if (voters[voterAddresses[i]].userType == Stakeholder.TEACHER){
+            } else if (voters[voterAddresses[i]].userType == Stakeholder.TEACHER) {
                 _user_type = "teacher";
             } else {
                 _user_type = "director";
@@ -292,6 +292,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
             _canVotes[i] = voters[voterAddresses[i]].canVote;
             _hasVoteds[i] = hasVoted[_electionId][voterAddresses[i]];
         }
+        
         return (_names, _user_types, _canVotes, _hasVoteds);
     }
 
@@ -312,6 +313,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         }
 
         winners[_electionId] = _max;
+        
         emit BallotResultCompiled(_electionId, elections[_electionId].name, block.timestamp);
     }
 
@@ -320,7 +322,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @dev view results of an election
      * @param _electionId the id of the election you want to view the results for
      */
-    function viewResult(uint256 _electionId) public view returns(
+    function viewResult(uint256 _electionId) external view returns(
         string memory electionName, 
         string memory proposalName, 
         uint256 voteCount
@@ -377,6 +379,8 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @param _voter the voter's wallet address
      */
     function banVoter(address _voter) external isChairperson {
+        require(voters[_voter].canVote, "user has already been banned");
+
         voters[_voter].canVote = false;
         emit BanVoter(voters[_voter].name, _voter);
     }
@@ -386,7 +390,9 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @dev unban a voter from voting
      * @param _voter the voter's wallet address
      */
-    function unbanVoter(address _voter) external isChairperson{
+    function unbanVoter(address _voter) external isChairperson {
+        require(!voters[_voter].canVote, "user is not banned");
+
         voters[_voter].canVote = true;
         emit UnbanVoter(voters[_voter].name, _voter);
     }
