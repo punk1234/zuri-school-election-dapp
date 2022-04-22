@@ -184,6 +184,38 @@ const ViewElectionContext = (props) => {
   };
 
   // ban and un ban
+  const banVote = async (voterAddress) => {
+    try {
+      // let contract = getProviderContractOrSignerContract(true)
+      const contract = await getProviderContractOrSignerContract(true);
+      let response = await contract.banVoter(voterAddress);
+
+      console.log(response);
+      contract.on("BanVoter", (name, voter) => {
+        console.log(`the voter ${name} with address ${voter} has being band`)
+        setShowBanVoter(`the voter ${name} with address ${voter} has being band`)
+
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  };
+   const unbanVoter = async (voterAddress) => {
+    try {
+      // let contract = getProviderContractOrSignerContract(true)
+      const contract = await getProviderContractOrSignerContract(true);
+      let response = await contract.unbanVoter(voterAddress);
+
+      console.log(response);
+      contract.on("UnbanVoter", (name, voter) => {
+        console.log(`the voter ${name} with address ${voter} has being unban`)
+        setShowUnBanVoter(`the voter ${name} with address ${voter} has being unban`)
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   electionCount();
   useEffect(() => {
