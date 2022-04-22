@@ -15,16 +15,14 @@ export default function Profile() {
           {profileDetails && (
             <div class="card shadow-sm m-4 border-0">
               <div class="row g-0">
-
                 <div class="col-md-4">
                   <img
                     src="https://www.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png
-  "
+"
                     class="img-fluid rounded-start"
                     alt="..."
                   />
                 </div>
-
                 <div class="col-md-8">
                   <div class="card-body text-center">
                     <h5 class="card-title">{profileDetails.name}</h5>
@@ -39,16 +37,13 @@ export default function Profile() {
                     </p>
                   </div>
                 </div>
-
               </div>
             </div>
           )}
         </div>
-
         <div className="col-md-3">
           <NoticeBoard />
         </div>
-        
       </div>
     </div>
   )
