@@ -112,7 +112,7 @@ export default function TeacherDirector() {
             value={resultElectionId}
             placeholder="enter election id"
           />
-          <button
+          <button className="btn btn-secondary"
             onClick={() => {
               viewResult(resultElectionId);
             }}

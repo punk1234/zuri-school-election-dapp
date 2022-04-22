@@ -1,11 +1,13 @@
 import React, { useContext, createContext, useState, useEffect, useCallback } from "react";
 import { providerSignerContext } from "./ProviderOrSignerContext";
+import { resultContext } from "./ViewResultContext";
 
 export const electionContext = createContext();
 const ViewElectionContext = (props) => {
   const { getProviderContractOrSignerContract, address, walletConnected } = useContext(
     providerSignerContext
   );
+  const { viewResult } = useContext(resultContext)
   const [viewElectionResponse, setViewElectionResponse] = useState([]);
   const [totalElection, setTotalElection] = useState(null);
   const [showStartElection, setShowStartElection] = useState("");
@@ -127,6 +129,8 @@ const getUserAddressDetails =  useCallback(async (address) => {
       contract.on("BallotResultCompiled", (electId, electName, time) => {
         console.log("result compiled", electId, electName, time)
       })
+      viewResult(electionId)
+
     } catch (err) {
       if (err.error === undefined) {
         console.log("not connected");
@@ -137,7 +141,8 @@ const getUserAddressDetails =  useCallback(async (address) => {
   };
 
 // function to cast a vote on a proposal
-  const castVote = async (castElectionId, proposalIdex) => {
+  const castVote = async (castElectionId, proposals, proposal) => {
+     const proposalIdex = proposals.indexOf(proposal)
     try {
       // let contract = getProviderContractOrSignerContract(true)
       const contract = await getProviderContractOrSignerContract(true);
@@ -196,8 +201,8 @@ const getUserAddressDetails =  useCallback(async (address) => {
         profileDetails,
         compileResults,
         castVote,
-        banVote,
-        unbanVoter,
+        // banVote,
+        // unbanVoter,
         showBanVoter,
         showUnBanVoter,
         chairmanAddress,

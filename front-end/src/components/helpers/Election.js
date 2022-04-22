@@ -29,12 +29,14 @@ export default function Election() {
                   class="list-group-item d-flex justify-content-between"
                 >
                   {prop}
-                  <button
-                    onClick={() => castVote(val.id)}
-                    className="btn btn-secondary btn-sm"
-                  >
-                    vote
-                  </button>
+                  {val.isActive && (
+                    <button
+                      onClick={() => castVote(val.id, val.proposals, prop)}
+                      className="btn btn-secondary btn-sm"
+                    >
+                      vote
+                    </button>
+                  )}
                 </li>
               );
             })}
