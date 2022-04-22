@@ -39,9 +39,12 @@ git clone {{ GITHUB_REPOSITORY_URL }}
 cd zuri-school-election-app
 
 For Smart-contract App;
+
 cd zuri-school-election-app/smart-contract
 
+
 For Front-end App;
+
 cd zuri-school-election-app/front-end
 ```
 
@@ -59,7 +62,7 @@ Check sample.env file (SMART-CONTRACT APP)
 ```
 For Smart-contract App;
 - npm run deploy
-> npm run verify
+- npm run verify
 
 For Front-end App;
 - npm start
