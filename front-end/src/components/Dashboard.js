@@ -5,20 +5,24 @@ import TeacherDirector from "./Teacher";
 import Student from "./Student";
 import Admin from "./Admin";
 import Loading from "./helpers/Loading";
+import Home from "./Home";
 export default function Dashboard() {
   const { profileDetails } = useContext(electionContext);
 
   const display = () => {
     switch (profileDetails.userType) {
+      case "student":
+        return <Student />;
       case "teacher":
         return <TeacherDirector />;
+      
       case "director":
         return <TeacherDirector />;
       case "chairman":
         return <Admin />;
 
       default:
-        return <Student />;
+        return <Home />;
     }
   };
   return (

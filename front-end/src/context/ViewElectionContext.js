@@ -263,8 +263,8 @@ const ViewElectionContext = (props) => {
         compileResults,
 
         castVote,
-        // banVote,
-        // unbanVoter,
+        banVote,
+        unbanVoter,
         showBanVoter,
         showUnBanVoter,
         chairmanAddress,
