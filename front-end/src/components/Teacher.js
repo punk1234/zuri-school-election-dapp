@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
 import { resultContext } from "../context/ViewResultContext";
 import { electionContext } from "../context/ViewElectionContext";
-import Loading from "./helpers/Loading"
-import Election from "./helpers/Election"
+import Loading from "./helpers/Loading";
+import Election from "./helpers/Election";
 export default function TeacherDirector() {
   const { getProviderContractOrSignerContract } = useContext(
     providerSignerContext
@@ -13,7 +13,6 @@ export default function TeacherDirector() {
   const { electionCount } = useContext(electionContext);
   const [resultElectionId, setResultElectionId] = useState(0);
   const [electionDetails, setElectionDetails] = useState({});
-
 
   // function to create an election
   const handleElectionInputs = (e) => {
@@ -42,7 +41,7 @@ export default function TeacherDirector() {
       contract.on("BallotCreated", (id, name, expireTime) => {
         setLoading(false);
         console.log("ballot created", id, name, expireTime);
-        electionCount()
+        electionCount();
       });
       setElectionDetails({});
     } catch (err) {
@@ -55,34 +54,34 @@ export default function TeacherDirector() {
     }
   };
 
-  
-
   return (
     <div className="row my-5">
-    
       <div className="col-md-3">
-      {loading && <Loading />}
-      <p className="lead">Teacher/Director</p>
+        {loading && <Loading />}
+        <p className="lead">Teacher/Director</p>
         <h2>Create election</h2>
         <form onSubmit={handleElectionCreation}>
-          <label>Election Name: </label>
-          <input
+          <label className="form-label">Election Name: </label>
+          <input 
+          className="form-control"
             type="text"
             name="name"
             value={electionDetails.name || ""}
             placeholder="enter election name"
             onChange={handleElectionInputs}
           />
-          <label>Enter a proposal name</label>
-          <input
+          <label className="form-label">Enter a proposal name</label>
+          <input 
+          className="form-control"
             type="text"
             name="proposalName"
             placeholder="enter proposal name"
             onChange={handleElectionInputs}
             value={electionDetails.proposalName || ""}
           />
-          <label htmlFor="hours">Hours</label>
-          <input
+          <label className="form-label" htmlFor="hours">Hours</label>
+          <input 
+          className="form-control"
             type="number"
             id="hours"
             name="hours"
@@ -90,23 +89,24 @@ export default function TeacherDirector() {
             placeholder="enter hours"
             onChange={handleElectionInputs}
           />
-          <label>Describe</label>
-          <textarea
+          <label className="form-label">Describe</label>
+          <textarea 
+          className="form-control"
             name="description"
             value={electionDetails.description || ""}
             placeholder="enter election description"
             onChange={handleElectionInputs}
           />
-          <button type="submit">Create Election</button>
+          <button type="submit" className="btn btn-secondary">Create Election</button>
         </form>
       </div>
       <div className="col-md-9">
         <Election />
 
-      
         <div className="view-result-container">
           <h1>View Results</h1>
-          <input
+          <input 
+          className="form-control"
             type="number"
             onChange={(e) => setResultElectionId(e.target.value)}
             value={resultElectionId}
