@@ -93,6 +93,42 @@ const getUserAddressDetails =  useCallback(async (address) => {
     }
   };
 
+  //compile result
+  const compileResults = async (electionId) => {
+    try {
+     
+      const contract = await getProviderContractOrSignerContract(true);
+      let tx = await contract.compileResults(electionId);
+      window.alert("Results compiled");
+
+      console.log(tx);
+      contract.on("BallotResultCompiled", (electId, electName, time) => {
+        console.log("result compiled", electId, electName, time)
+      })
+    } catch (err) {
+      if (err.error === undefined) {
+        console.log("not connected");
+      } else {
+        console.error(err.error);
+      }
+    }
+  };
+
+// function to cast a vote on a proposal
+  const castVote = async (castElectionId, proposalIdex) => {
+    try {
+      // let contract = getProviderContractOrSignerContract(true)
+      const contract = await getProviderContractOrSignerContract(true);
+      let response = await contract.castVote(castElectionId, proposalIdex);
+
+      console.log(response);
+      contract.on("VoteCasted", (electId, address) => {
+        console.log("u casted a vote", electId, address)
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 //stop election
   const stopElection = async (electionId) => {
@@ -154,6 +190,8 @@ const getUserAddressDetails =  useCallback(async (address) => {
         startElection,
         stopElection,
         profileDetails,
+        compileResults,
+        castVote,
         chairmanAddress,
         showStartElection,
         showStopElection,

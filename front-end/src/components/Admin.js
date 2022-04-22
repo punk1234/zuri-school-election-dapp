@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
-
+import Election from "./helpers/Election"
 export default function Admin() {
   const { getProviderContractOrSignerContract } = useContext(
     providerSignerContext
@@ -154,7 +154,8 @@ export default function Admin() {
   };
 
   return (
-    <div className="container">
+    <div className="container row my-5">
+      <div className="col-4">
       <h2>Chairman</h2>
       <div className="my-4">
         Add Director
@@ -263,8 +264,11 @@ export default function Admin() {
         </form>
       </div>
 
+      </div>
     {/* section for showing election   */}
-
+    <div className="col-8">
+     <Election />
+    </div>
     </div>
   );
 }
