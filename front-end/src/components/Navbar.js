@@ -1,10 +1,28 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
 function Navbar() {
-  const { walletConnected, connectWallet, address } = useContext(
+  const { getProviderContractOrSignerContract, walletConnected, connectWallet, address } = useContext(
     providerSignerContext
   );
+ const { schoolName, setSchoolName} = useState("")
+  useEffect(() => {
+    const viewSchoolName = async () => {
+      try {
+        // let contract = getProviderContractOrSignerContract()
+        const contract = await getProviderContractOrSignerContract();
+        let tx = await contract.schoolName();
+       console.log(tx)
+      } catch (err) {
+        if (err.error === undefined) {
+          console.log("not connected");
+        } else {
+          console.error(err.error);
+        }
+      }
+    };
+    viewSchoolName();
+  }, [walletConnected]);
   return (
     <nav
       className="navbar navbar-expand-lg navbar-light bg-body shadow-sm rounded"
@@ -12,7 +30,7 @@ function Navbar() {
     >
       <div className="container">
         <Link className="navbar-brand" to={"/"}>
-          Home
+         {walletConnected ? " ZuriSchool " : "Home"}
         </Link>
 
         <button
