@@ -58,8 +58,8 @@ Check sample.env file (SMART-CONTRACT APP)
 - Start Application
 ```
 For Smart-contract App;
-npm run deploy
-npm run verify
+- npm run deploy
+> npm run verify
 
 For Front-end App;
 - npm start
