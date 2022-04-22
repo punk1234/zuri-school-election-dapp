@@ -350,7 +350,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
             weights[Stakeholder.DIRECTOR]  = weight;
         }
         else {
-            require(false, "invalid stakeholder name entered");
+            revert("invalid stakeholder name entered");
         }
     }
 
@@ -370,7 +370,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
             return weights[Stakeholder.DIRECTOR];
         }
         
-        require(false, "invalid stakeholder name entered");
+        revert("invalid stakeholder name entered");
     }
 
     /**
