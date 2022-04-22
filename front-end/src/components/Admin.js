@@ -299,7 +299,38 @@ export default function Admin() {
         </div>
 
         {/* //ban voter */}
-       
+      <div className="my-4">
+          Ban and Unban
+          <form onSubmit={handleBan}>
+            <label className="form-label">Voter Address: </label>
+            <input
+              className="form-control"
+              type="text"
+              name="address"
+              placeholder="address"
+              required
+              onChange={(e) => setVoterAddress(e.target.value)}
+              value={voterAddress || ""}
+            />
+            <div className="d-flex justify-content-between">
+              <button
+                type="submit"
+                onClick={handleBanVoter}
+                className="btn btn-danger"
+              >
+                Ban Voter
+              </button>
+              <button
+                type="submit"
+                onClick={handleUnBanVoter}
+                className="btn btn-secondary"
+              >
+                Unban Voter
+              </button>
+            </div>
+          </form>
+        </div>
+
       </div>
       {/* section for showing election   */}
       <div className="col-8">
