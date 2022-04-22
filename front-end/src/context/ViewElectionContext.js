@@ -1,22 +1,29 @@
-import React, { useContext, createContext, useState, useEffect, useCallback } from "react";
+import React, {
+  useContext,
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { providerSignerContext } from "./ProviderOrSignerContext";
+
 
 export const electionContext = createContext();
 const ViewElectionContext = (props) => {
-  const { getProviderContractOrSignerContract, address, walletConnected } = useContext(
-    providerSignerContext
-  );
+  const { getProviderContractOrSignerContract, address, walletConnected } =
+    useContext(providerSignerContext);
+
+  const [electionResult, setElectionResult] = useState([]);
   const [viewElectionResponse, setViewElectionResponse] = useState([]);
   const [totalElection, setTotalElection] = useState(null);
   const [showStartElection, setShowStartElection] = useState("");
   const [showStopElection, setShowStopElection] = useState("");
-  const [chairmanAddress, setChairmainAddress] = useState("")
-  const [showBanVoter, setShowBanVoter] = useState("")
-  const [showUnBanVoter, setShowUnBanVoter] = useState("")
-
+  const [chairmanAddress, setChairmainAddress] = useState("");
+  const [showBanVoter, setShowBanVoter] = useState("");
+  const [showUnBanVoter, setShowUnBanVoter] = useState("");
 
   //profile details
-  const [profileDetails, setProfileDetails] = useState(null)
+  const [profileDetails, setProfileDetails] = useState(null);
   // function to view an election
   const electionCount = async () => {
     try {
@@ -25,8 +32,8 @@ const ViewElectionContext = (props) => {
       let tx = await contract.electionCount();
 
       setTotalElection(await tx.toNumber());
-      getChairmanAddress()
-      getUserAddressDetails(address)
+      getChairmanAddress();
+      getUserAddressDetails(address);
     } catch (err) {
       if (err.error === undefined) {
         console.log("not connected");
@@ -36,13 +43,13 @@ const ViewElectionContext = (props) => {
     }
   };
 
-//get charman address
-const getChairmanAddress = async () => {
+  //get charman address
+  const getChairmanAddress = async () => {
     try {
       // let contract = getProviderContractOrSignerContract()
       const contract = await getProviderContractOrSignerContract();
       let tx = await contract.chairperson();
-      setChairmainAddress(tx)
+      setChairmainAddress(tx);
     } catch (err) {
       if (err.error === undefined) {
         console.log("not connected");
@@ -52,8 +59,33 @@ const getChairmanAddress = async () => {
     }
   };
 
-//using the address to get the user details
-const getUserAddressDetails =  useCallback(async (address) => {
+  // function to view the results of an election
+  const viewResult = async (electionId) => {
+    try {
+      // let contract = getProviderContractOrSignerContract()
+      const contract = await getProviderContractOrSignerContract(true);
+      console.log(contract);
+      let tx = await contract.viewResult(electionId);
+
+      let response = {
+        electionName: tx.electionName,
+        proposalName: tx.proposalName,
+        voteCount: tx.voteCount.toNumber(),
+      };
+      setElectionResult((prevState) => {
+        return [...prevState, response];
+      });
+    } catch (err) {
+      if (err.error === undefined) {
+        console.log("not connected");
+      } else {
+        console.error(err.error);
+      }
+    }
+  };
+
+  //using the address to get the user details
+  const getUserAddressDetails = useCallback(async (address) => {
     try {
       // let contract = getProviderContractOrSignerContract()
       const contract = await getProviderContractOrSignerContract();
@@ -61,22 +93,20 @@ const getUserAddressDetails =  useCallback(async (address) => {
       let res = {
         name: tx.name,
         canVote: tx.canVote,
-        userType: tx.usertype
-      }
-      setProfileDetails(res)
+        userType: tx.usertype,
+      };
+      setProfileDetails(res);
     } catch (err) {
       if (err.error === undefined) {
         console.log("not connected");
       } else {
         console.error(err.error);
       }
-      console.error(err)
+      console.error(err);
     }
   }, []);
 
-
-
-//start election
+  //start election
   const startElection = async (electionId) => {
     //for starting election and stoping election
 
@@ -95,7 +125,7 @@ const getUserAddressDetails =  useCallback(async (address) => {
       }
     }
   };
-//stop election
+  //stop election
   const stopElection = async (electionId) => {
     //for starting election and stoping election
 
@@ -118,15 +148,15 @@ const getUserAddressDetails =  useCallback(async (address) => {
   //compile result
   const compileResults = async (electionId) => {
     try {
-     
       const contract = await getProviderContractOrSignerContract(true);
       let tx = await contract.compileResults(electionId);
       window.alert("Results compiled");
 
       console.log(tx);
       contract.on("BallotResultCompiled", (electId, electName, time) => {
-        console.log("result compiled", electId, electName, time)
-      })
+        console.log("result compiled", electId, electName, time);
+      });
+      viewResult(electionId);
     } catch (err) {
       if (err.error === undefined) {
         console.log("not connected");
@@ -136,8 +166,9 @@ const getUserAddressDetails =  useCallback(async (address) => {
     }
   };
 
-// function to cast a vote on a proposal
-  const castVote = async (castElectionId, proposalIdex) => {
+  // function to cast a vote on a proposal
+  const castVote = async (castElectionId, proposals, proposal) => {
+    const proposalIdex = proposals.indexOf(proposal);
     try {
       // let contract = getProviderContractOrSignerContract(true)
       const contract = await getProviderContractOrSignerContract(true);
@@ -145,14 +176,14 @@ const getUserAddressDetails =  useCallback(async (address) => {
 
       console.log(response);
       contract.on("VoteCasted", (electId, address) => {
-        console.log("u casted a vote", electId, address)
-      })
+        console.log("u casted a vote", electId, address);
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
-// ban and un ban
+  // ban and un ban
 
   electionCount();
   useEffect(() => {
@@ -188,6 +219,9 @@ const getUserAddressDetails =  useCallback(async (address) => {
   return (
     <electionContext.Provider
       value={{
+        electionResult,
+        setElectionResult,
+        viewResult,
         viewElectionResponse,
         totalElection,
         electionCount,
@@ -195,9 +229,10 @@ const getUserAddressDetails =  useCallback(async (address) => {
         stopElection,
         profileDetails,
         compileResults,
+
         castVote,
-        banVote,
-        unbanVoter,
+        // banVote,
+        // unbanVoter,
         showBanVoter,
         showUnBanVoter,
         chairmanAddress,
@@ -208,6 +243,6 @@ const getUserAddressDetails =  useCallback(async (address) => {
       {props.children}
     </electionContext.Provider>
   );
-}
+};
 
-export default ViewElectionContext
+export default ViewElectionContext;

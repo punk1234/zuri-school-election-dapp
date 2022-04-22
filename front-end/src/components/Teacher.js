@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
-import { resultContext } from "../context/ViewResultContext";
 import { electionContext } from "../context/ViewElectionContext";
 import Loading from "./helpers/Loading";
 import Election from "./helpers/Election";
@@ -9,8 +8,8 @@ export default function TeacherDirector() {
     providerSignerContext
   );
   const [loading, setLoading] = useState(false);
-  const { viewResult } = useContext(resultContext);
-  const { electionCount } = useContext(electionContext);
+
+  const { electionCount, viewResult } = useContext(electionContext);
   const [resultElectionId, setResultElectionId] = useState(0);
   const [electionDetails, setElectionDetails] = useState({});
 
@@ -112,7 +111,7 @@ export default function TeacherDirector() {
             value={resultElectionId}
             placeholder="enter election id"
           />
-          <button
+          <button className="btn btn-secondary"
             onClick={() => {
               viewResult(resultElectionId);
             }}

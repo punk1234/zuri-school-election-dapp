@@ -1,10 +1,8 @@
 import React, { useContext } from "react";
 import { electionContext } from "../context/ViewElectionContext";
-import { resultContext } from "../context/ViewResultContext";
 
 export default function NoticeBoard() {
-  const { electionResult } = useContext(resultContext);
-  const { showStartElection, showStopElection } = useContext(electionContext);
+  const {electionResult, showStartElection, showStopElection } = useContext(electionContext);
 
   const displayResult = electionResult.map((val) => {
     return (
