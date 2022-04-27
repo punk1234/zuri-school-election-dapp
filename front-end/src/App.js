@@ -7,7 +7,9 @@ import Profile from "./components/Profile";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Dashboard from "./components/Dashboard";
-;
+
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function App() {
  
@@ -22,6 +24,7 @@ function App() {
         <Route path="profile" element={<Profile />} />
         <Route path="*" element={<NotFound />}/>
       </Routes>
+       
     </BrowserRouter>
   );
 }
