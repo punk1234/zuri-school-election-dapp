@@ -5,20 +5,17 @@ function Navbar() {
   const { getProviderContractOrSignerContract, walletConnected, connectWallet, address } = useContext(
     providerSignerContext
   );
- const { schoolName, setSchoolName} = useState("")
+ const { schoolName, setSchoolName} = useState("ZuriSchool")
   useEffect(() => {
     const viewSchoolName = async () => {
       try {
         // let contract = getProviderContractOrSignerContract()
         const contract = await getProviderContractOrSignerContract();
         let tx = await contract.schoolName();
-       console.log(tx)
+        console.log(tx)
       } catch (err) {
-        if (err.error === undefined) {
-          console.log("not connected");
-        } else {
+       
           console.error(err.error);
-        }
       }
     };
     viewSchoolName();
@@ -30,7 +27,7 @@ function Navbar() {
     >
       <div className="container">
         <Link className="navbar-brand" to={"/"}>
-         {walletConnected ? " ZuriSchool " : "Home"}
+         {walletConnected ? "ZuriSchool" : "Home"}
         </Link>
 
         <button
