@@ -22,6 +22,7 @@ const ViewElectionContext = (props) => {
   const [showBanVoter, setShowBanVoter] = useState("");
   const [showUnBanVoter, setShowUnBanVoter] = useState("");
   const [generalError, setGeneralError] = useState("")
+  const [activities, setActivities] = useState([])
 
   //profile details
   const [profileDetails, setProfileDetails] = useState(null);
@@ -262,7 +263,10 @@ const ViewElectionContext = (props) => {
         showStartElection,
         showStopElection,
         //error handle
-        generalError
+        generalError,
+        //activities
+        activities,
+        setActivities
       }}
     >
       {props.children}

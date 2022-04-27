@@ -12,7 +12,7 @@ export default function TeacherDirector() {
   );
   const [loading, setLoading] = useState(false);
 
-  const { electionCount, viewResult, generalError, setGeneralError} =
+  const { electionCount, viewResult, generalError, setGeneralError,activities, setActivities} =
     useContext(electionContext);
   const [resultElectionId, setResultElectionId] = useState(0);
   const [electionDetails, setElectionDetails] = useState({});
@@ -51,11 +51,11 @@ export default function TeacherDirector() {
     e.preventDefault();
     const proposalName = electionDetails.proposalName.split(",");
     const proposalNumber = proposalName.length;
-    console.log(proposalName);
+    console.log(proposalNumber);
     try {
       setLoading(true);
       const contract = await getProviderContractOrSignerContract(true);
-      let response = await contract.createElection(
+      let tx = await contract.createElection(
         electionDetails.name,
         proposalNumber,
         electionDetails.description,
@@ -63,21 +63,34 @@ export default function TeacherDirector() {
         electionDetails.hours
       );
 
-      console.log(response);
+      // console.log(tx);
+      // console.log(tx.hash)
+      // console.log(tx.gasPrice.toNumber())
+      setActivities(preState => {
+        return [...preState, {
+          'type': 'CREATE_ELECTION',
+          'hash': tx.hash,
+          'cost': tx.gasPrice.toNumber()
+        }]
+        })
       //listening for event emited
       contract.on("BallotCreated", (id, name, expireTime) => {
         setLoading(false);
-        console.log("ballot created", id, name, expireTime);
+        console.log("ballot created", id.toNumber(), name, expireTime.toNumber());
         electionCount();
+        
       });
+      
       setElectionDetails({});
     } catch (err) {
       setLoading(false);
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
+      const {message} = err.error
+        let errorMsg = message.split(':')[1]
+        setGeneralError(errorMsg)
+        // setGeneralError(prevState => {
+        //   return [...prevState, errorMsg]
+        // })
+        console.log(errorMsg)
     }
   };
 

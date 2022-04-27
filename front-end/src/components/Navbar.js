@@ -1,33 +1,34 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
+import { electionContext } from "../context/ViewElectionContext";
 function Navbar() {
-  const { getProviderContractOrSignerContract, walletConnected, connectWallet, address } = useContext(
-    providerSignerContext
-  );
- const { schoolName, setSchoolName} = useState("ZuriSchool")
+  const {
+    getProviderContractOrSignerContract,
+    walletConnected,
+    connectWallet,
+    address,
+  } = useContext(providerSignerContext);
+  const { activities } = useContext(electionContext);
+  const { schoolName, setSchoolName } = useState("ZuriSchool");
   useEffect(() => {
     const viewSchoolName = async () => {
       try {
         // let contract = getProviderContractOrSignerContract()
         const contract = await getProviderContractOrSignerContract();
         let tx = await contract.schoolName();
-        console.log(tx)
+        console.log(tx);
       } catch (err) {
-       
-          console.error(err.error);
+        console.error(err.error);
       }
     };
     viewSchoolName();
   }, [walletConnected]);
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-light bg-body shadow-sm rounded"
-     
-    >
+    <nav className="navbar navbar-expand-lg navbar-light bg-body shadow-sm rounded">
       <div className="container">
         <Link className="navbar-brand" to={"/"}>
-         {walletConnected ? "ZuriSchool" : "Home"}
+          {walletConnected ? "ZuriSchool" : "Home"}
         </Link>
 
         <button
@@ -62,6 +63,31 @@ function Navbar() {
               >
                 Dashboad
               </Link>
+              <div className="dropdown">
+                <div
+                  className="nav-link position-relative "
+                  role="button"
+                  id="dropdownMenuLink"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i
+                    className="bi bi-activity"
+                    style={{ fontSize: "1.5rem" }}
+                  ></i>
+                  <span className="position-absolute translate-middle top-50">
+                    {activities.length > 0 ? activities.length : "0"}
+                  </span>
+                </div>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      Action
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
               <Link className="nav-link" to={"/profile"}>
                 Profile:
                 {walletConnected &&
