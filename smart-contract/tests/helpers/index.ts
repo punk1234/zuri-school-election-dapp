@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { Contract, ContractFactory } from "ethers";
+import { Contract, ContractFactory, Signer } from "ethers";
 
 /**
  * @class TestHelper
@@ -19,7 +19,8 @@ class TestHelper {
         );
 
         const zuriVotingContract: Contract = await ZuriSchoolVoting.deploy(
-            "ZuriSchool"
+            "ZuriSchool",
+            (await ethers.getSigners())[0].getAddress()
         );
 
         await zuriVotingContract.deployed();

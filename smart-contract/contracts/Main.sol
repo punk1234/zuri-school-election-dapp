@@ -60,9 +60,9 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @dev setup chairperson, stakeholders vote weights & school name
      * @param _schoolName name of school that owns the contract
      */
-    constructor(string memory _schoolName) {
-        chairperson = msg.sender;
+    constructor(string memory _schoolName, address _chairperson) {
         schoolName = _schoolName;
+        chairperson = _chairperson;
 
         _initializeStakeholdersVoteWeight(1);
 
