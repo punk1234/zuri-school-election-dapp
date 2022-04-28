@@ -23,6 +23,7 @@ const ViewElectionContext = (props) => {
   const [showUnBanVoter, setShowUnBanVoter] = useState("");
   const [generalError, setGeneralError] = useState("")
   const [activities, setActivities] = useState([])
+  const [allUsers, setAllUsers] = useState({})
 
   //profile details
   const [profileDetails, setProfileDetails] = useState(null);
@@ -97,8 +98,10 @@ const ViewElectionContext = (props) => {
         name: tx.name,
         canVote: tx.canVote,
         userType: tx.usertype,
+        address: address
       };
       setProfileDetails(res);
+      setAllUsers(prevState =>  ({...prevState, ...res}))
     } catch (err) {
         console.log(err.reason)
     }
@@ -176,7 +179,7 @@ const ViewElectionContext = (props) => {
   })
 
   // ban and un ban
-  const banVote = async (voterAddress) => {
+  const banVoter = async (voterAddress) => {
     try {
       // let contract = getProviderContractOrSignerContract(true)
       const contract = await getProviderContractOrSignerContract(true);
@@ -189,7 +192,15 @@ const ViewElectionContext = (props) => {
 
       })
     } catch (err) {
-       console.log(err.reason)
+       try{
+        const {message} = err.error
+        let errorMsg = message.split(':')[1]
+        setGeneralError(errorMsg)
+
+      } catch(error){
+        console.log(err.reason)
+        setGeneralError(err.reason)
+      }
     }
   };
    const unbanVoter = async (voterAddress) => {
@@ -204,12 +215,18 @@ const ViewElectionContext = (props) => {
         setShowUnBanVoter(`the voter ${name} with address ${voter} has being unban`)
       })
     } catch (err) {
+        try{
+        const {message} = err.error
+        let errorMsg = message.split(':')[1]
+        setGeneralError(errorMsg)
+
+      } catch(error){
         console.log(err.reason)
+      }
     }
   };
 
 
-  electionCount();
   useEffect(() => {
     const viewElection = async () => {
       electionCount();
@@ -255,13 +272,16 @@ const ViewElectionContext = (props) => {
         compileResults,
         setGeneralError,
         castVote,
-        banVote,
+        banVoter,
         unbanVoter,
         showBanVoter,
         showUnBanVoter,
         chairmanAddress,
         showStartElection,
         showStopElection,
+
+        //getting all users
+        allUsers,
         //error handle
         generalError,
         //activities

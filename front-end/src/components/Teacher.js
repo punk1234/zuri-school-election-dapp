@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
 import { electionContext } from "../context/ViewElectionContext";
 import Loading from "./helpers/Loading";
 import Election from "./helpers/Election";
-import { toast, ToastContainer } from "react-toastify";
+
 
 //
 export default function TeacherDirector() {
@@ -12,35 +12,13 @@ export default function TeacherDirector() {
   );
   const [loading, setLoading] = useState(false);
 
-  const { electionCount, viewResult, generalError, setGeneralError,activities, setActivities} =
+  const { electionCount, viewResult, setGeneralError, setActivities} =
     useContext(electionContext);
   const [resultElectionId, setResultElectionId] = useState(0);
   const [electionDetails, setElectionDetails] = useState({});
   
 
-  //notification popups
-  const notify = (message) => {
-    return toast.error(message, {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      
-      draggable: true,
-      progress: undefined,
-      limit: 1,
-    });
-  };
   
-  //notification
-  useEffect(() => {
-    if(generalError){
-    notify(generalError)
-    
-    }
-    setGeneralError("")
-  }, [generalError])
   // function to create an election
   const handleElectionInputs = (e) => {
     const name = e.target.name;
@@ -96,7 +74,7 @@ export default function TeacherDirector() {
 
   return (
     <div className="row my-5">
-     <ToastContainer position="top-center" />
+     
       <div className="col-md-3">
         {loading && <Loading />}
         <p className="lead">Teacher/Director</p>

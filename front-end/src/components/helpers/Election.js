@@ -15,8 +15,8 @@ export default function Election() {
   const { address } = useContext(providerSignerContext);
   const displayElection = viewElectionResponse.map((val) => {
     return (
-      <div key={val.id} className="col-4">
-        <div className="card">
+      <div key={val.id} className="col-4 mt-2 ">
+        <div className="card shadow-sm border-0">
           <div class="card-body">
             <h5 class="card-title">{val.name}</h5>
             <h6 class="card-subtitle mt-2 text-muted">Proposals</h6>
@@ -73,7 +73,7 @@ export default function Election() {
     );
   });
   return (
-    <div className="row justify-content-center">
+    <div className="row">
       <h3>Voting Section</h3>
       {viewElectionResponse <= 0 && <Loading />}
       {displayElection}

@@ -23,7 +23,19 @@ function Navbar() {
       }
     };
     viewSchoolName();
+    
   }, [walletConnected]);
+
+  const displayAcivities = () => {
+    if(activities.length <= 0){
+      return  <li> No activities on this blockChain</li>
+    }
+    return activities.map(activity => {
+      return <li key={activity.hash}>
+              <a  target="_blank" href={`https://rinkeby.etherscan.io/tx/${activity.hash}`}>View on Chain</a>
+      </li>
+    })
+  }
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-body shadow-sm rounded">
       <div className="container">
@@ -80,11 +92,7 @@ function Navbar() {
                   </span>
                 </div>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <li>
-                    <a class="dropdown-item" href="#">
-                      Action
-                    </a>
-                  </li>
+                 {displayAcivities()}
                 </ul>
               </div>
 
