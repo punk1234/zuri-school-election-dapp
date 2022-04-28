@@ -1,3 +1,4 @@
+import React from 'react'
 import { createContext,  useRef, useState  } from "react";
 import { providers, Contract } from "ethers";
 import Web3Modal from "web3modal";
@@ -9,11 +10,12 @@ export default function ProviderOrSignerContext(props) {
   // walletConnected keep track of whether the user's wallet is connected or not
   const [walletConnected, setWalletConnected] = useState(false);
   const [address, setAddress] = useState(null)
+
   // Create a reference to the Web3 Modal (used for connecting to Metamask) which persists as long as the page is open
   const web3ModalRef = useRef();
 
   //to get signer or provider
-  const getProviderContractOrSignerContract = async (needSigner = false) => {
+  const getProviderContractOrSignerContract = React.useCallback( async (needSigner = false) => {
     // Connect to Metamask
     // Since we store `web3Modal` as a reference, we need to access the `current` value to get access to the underlying object
     const provider = await web3ModalRef.current.connect();
@@ -38,9 +40,7 @@ export default function ProviderOrSignerContext(props) {
     }
     // return web3Provider;
     return web3ProviderContract
-  };
-
- 
+  })
   /*
     connectWallet: Connects the MetaMask wallet
   */
@@ -69,7 +69,7 @@ export default function ProviderOrSignerContext(props) {
 
      
     return (
-        <providerSignerContext.Provider value={{ walletConnected, connectWallet, address, getProviderContractOrSignerContract}}>
+        <providerSignerContext.Provider value={{ walletConnected, connectWallet, address,  getProviderContractOrSignerContract}}>
             {props.children}
         </providerSignerContext.Provider>
     )

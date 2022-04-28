@@ -6,9 +6,10 @@ import Student from "./Student";
 import Admin from "./Admin";
 import Loading from "./helpers/Loading";
 import Home from "./Home";
+import { providerSignerContext } from "../context/ProviderOrSignerContext";
 export default function Dashboard() {
-  const { profileDetails } = useContext(electionContext);
-
+  const { profileDetails, chairmanAddress } = useContext(electionContext);
+ const { address } = useContext(providerSignerContext);
   const display = () => {
     switch (profileDetails.userType) {
       case "student":
@@ -18,18 +19,18 @@ export default function Dashboard() {
       
       case "director":
         return <TeacherDirector />;
-      case "chairman":
-        return <Admin />;
-
       default:
         return <Home />;
     }
   };
   return (
-    <div className="container-lg bg-light justify-content-center">
+    <div className="container-lg  justify-content-center">
       {profileDetails ? (
         <div className="row  g-3">
-          <div className="col-md-9">{display()}</div>
+          <div className="col-md-9">
+           {/* {chairmanAddress === address ? <Admin /> : display()} */}
+           <Admin />
+          </div>
           <div className="col-md-3">
             <NoticeBoard />
           </div>

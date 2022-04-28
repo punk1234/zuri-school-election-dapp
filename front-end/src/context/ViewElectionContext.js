@@ -21,6 +21,9 @@ const ViewElectionContext = (props) => {
   const [chairmanAddress, setChairmainAddress] = useState("");
   const [showBanVoter, setShowBanVoter] = useState("");
   const [showUnBanVoter, setShowUnBanVoter] = useState("");
+  const [generalError, setGeneralError] = useState("")
+  const [activities, setActivities] = useState([])
+  const [allUsers, setAllUsers] = useState({})
 
   //profile details
   const [profileDetails, setProfileDetails] = useState(null);
@@ -43,6 +46,8 @@ const ViewElectionContext = (props) => {
     }
   };
 
+  
+
   //get charman address
   const getChairmanAddress = async () => {
     try {
@@ -60,7 +65,7 @@ const ViewElectionContext = (props) => {
   };
 
   // function to view the results of an election
-  const viewResult = async (electionId) => {
+  const viewResult = React.useCallback( async (electionId) => {
     try {
       // let contract = getProviderContractOrSignerContract()
       const contract = await getProviderContractOrSignerContract(true);
@@ -76,13 +81,12 @@ const ViewElectionContext = (props) => {
         return [...prevState, response];
       });
     } catch (err) {
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
+        let errReason = err.reason 
+        console.log(errReason)
+        setGeneralError(errReason)
+       
     }
-  };
+  })
 
   //using the address to get the user details
   const getUserAddressDetails = useCallback(async (address) => {
@@ -94,15 +98,12 @@ const ViewElectionContext = (props) => {
         name: tx.name,
         canVote: tx.canVote,
         userType: tx.usertype,
+        address: address
       };
       setProfileDetails(res);
+      setAllUsers(prevState =>  ({...prevState, ...res}))
     } catch (err) {
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
-      console.error(err);
+        console.log(err.reason)
     }
   }, []);
 
@@ -118,11 +119,7 @@ const ViewElectionContext = (props) => {
       console.log("election started", tx);
       setShowStartElection(`The election with id ${electionId} has started`);
     } catch (err) {
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
+        console.log(err.reason)
     }
   };
   //stop election
@@ -137,11 +134,7 @@ const ViewElectionContext = (props) => {
       console.log("election stopped", tx);
       setShowStopElection(`The election with id ${electionId} has stoped`);
     } catch (err) {
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
+        console.log(err.reason)
     }
   };
 
@@ -158,16 +151,12 @@ const ViewElectionContext = (props) => {
       });
       viewResult(electionId);
     } catch (err) {
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
+        console.log(err.reason)
     }
   };
 
   // function to cast a vote on a proposal
-  const castVote = async (castElectionId, proposals, proposal) => {
+  const castVote = React.useCallback( async (castElectionId, proposals, proposal) => {
     const proposalIdex = proposals.indexOf(proposal);
     try {
       // let contract = getProviderContractOrSignerContract(true)
@@ -178,13 +167,19 @@ const ViewElectionContext = (props) => {
       contract.on("VoteCasted", (electId, address) => {
         console.log("u casted a vote", electId, address);
       });
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+        const {message} = err.error
+        let errorMsg = message.split(':')[1]
+        setGeneralError(errorMsg)
+        // setGeneralError(prevState => {
+        //   return [...prevState, errorMsg]
+        // })
+        console.log(errorMsg)
     }
-  };
+  })
 
   // ban and un ban
-  const banVote = async (voterAddress) => {
+  const banVoter = async (voterAddress) => {
     try {
       // let contract = getProviderContractOrSignerContract(true)
       const contract = await getProviderContractOrSignerContract(true);
@@ -196,8 +191,16 @@ const ViewElectionContext = (props) => {
         setShowBanVoter(`the voter ${name} with address ${voter} has being band`)
 
       })
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+       try{
+        const {message} = err.error
+        let errorMsg = message.split(':')[1]
+        setGeneralError(errorMsg)
+
+      } catch(error){
+        console.log(err.reason)
+        setGeneralError(err.reason)
+      }
     }
   };
    const unbanVoter = async (voterAddress) => {
@@ -211,13 +214,19 @@ const ViewElectionContext = (props) => {
         console.log(`the voter ${name} with address ${voter} has being unban`)
         setShowUnBanVoter(`the voter ${name} with address ${voter} has being unban`)
       })
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+        try{
+        const {message} = err.error
+        let errorMsg = message.split(':')[1]
+        setGeneralError(errorMsg)
+
+      } catch(error){
+        console.log(err.reason)
+      }
     }
   };
 
 
-  electionCount();
   useEffect(() => {
     const viewElection = async () => {
       electionCount();
@@ -261,15 +270,23 @@ const ViewElectionContext = (props) => {
         stopElection,
         profileDetails,
         compileResults,
-
+        setGeneralError,
         castVote,
-        banVote,
+        banVoter,
         unbanVoter,
         showBanVoter,
         showUnBanVoter,
         chairmanAddress,
         showStartElection,
         showStopElection,
+
+        //getting all users
+        allUsers,
+        //error handle
+        generalError,
+        //activities
+        activities,
+        setActivities
       }}
     >
       {props.children}
