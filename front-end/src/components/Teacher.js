@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
 import { electionContext } from "../context/ViewElectionContext";
 import Loading from "./helpers/Loading";
 import Election from "./helpers/Election";
-import { toast, ToastContainer } from "react-toastify";
+
 
 //
 export default function TeacherDirector() {
@@ -12,35 +12,13 @@ export default function TeacherDirector() {
   );
   const [loading, setLoading] = useState(false);
 
-  const { electionCount, viewResult, generalError, setGeneralError} =
+  const { electionCount, viewResult, setGeneralError, setActivities} =
     useContext(electionContext);
   const [resultElectionId, setResultElectionId] = useState(0);
   const [electionDetails, setElectionDetails] = useState({});
   
 
-  //notification popups
-  const notify = (message) => {
-    return toast.error(message, {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      
-      draggable: true,
-      progress: undefined,
-      limit: 1,
-    });
-  };
   
-  //notification
-  useEffect(() => {
-    if(generalError){
-    notify(generalError)
-    
-    }
-    setGeneralError("")
-  }, [generalError])
   // function to create an election
   const handleElectionInputs = (e) => {
     const name = e.target.name;
@@ -51,11 +29,11 @@ export default function TeacherDirector() {
     e.preventDefault();
     const proposalName = electionDetails.proposalName.split(",");
     const proposalNumber = proposalName.length;
-    console.log(proposalName);
+    console.log(proposalNumber);
     try {
       setLoading(true);
       const contract = await getProviderContractOrSignerContract(true);
-      let response = await contract.createElection(
+      let tx = await contract.createElection(
         electionDetails.name,
         proposalNumber,
         electionDetails.description,
@@ -63,27 +41,40 @@ export default function TeacherDirector() {
         electionDetails.hours
       );
 
-      console.log(response);
+      // console.log(tx);
+      // console.log(tx.hash)
+      // console.log(tx.gasPrice.toNumber())
+      setActivities(preState => {
+        return [...preState, {
+          'type': 'CREATE_ELECTION',
+          'hash': tx.hash,
+          'cost': tx.gasPrice.toNumber()
+        }]
+        })
       //listening for event emited
       contract.on("BallotCreated", (id, name, expireTime) => {
         setLoading(false);
-        console.log("ballot created", id, name, expireTime);
+        console.log("ballot created", id.toNumber(), name, expireTime.toNumber());
         electionCount();
+        
       });
+      
       setElectionDetails({});
     } catch (err) {
       setLoading(false);
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
+      const {message} = err.error
+        let errorMsg = message.split(':')[1]
+        setGeneralError(errorMsg)
+        // setGeneralError(prevState => {
+        //   return [...prevState, errorMsg]
+        // })
+        console.log(errorMsg)
     }
   };
 
   return (
     <div className="row my-5">
-     <ToastContainer position="top-center" />
+     
       <div className="col-md-3">
         {loading && <Loading />}
         <p className="lead">Teacher/Director</p>

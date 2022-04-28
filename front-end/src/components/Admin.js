@@ -2,23 +2,25 @@ import { useContext, useState } from "react";
 import { providerSignerContext } from "../context/ProviderOrSignerContext";
 import { electionContext } from "../context/ViewElectionContext";
 import Election from "./helpers/Election";
+import StudentOffcanvas from "./helpers/StudentOffcanvas";
+import StaffOffcanvas from "./StaffOffcanvas";
 export default function Admin() {
   const { getProviderContractOrSignerContract } = useContext(
     providerSignerContext
   );
-  const { banVoter, unbanVoter } = useContext(electionContext);
+  const { banVoter, unbanVoter, allUsers, setGeneralError } =
+    useContext(electionContext);
 
   const [loading, setLoading] = useState(false);
   const [directorDetails, setDirectorDetails] = useState({});
   const [teacherDetails, setTeacherDetails] = useState({});
   const [studentDetails, setStudentDetails] = useState({});
   const [weight, setWeight] = useState({});
-  const [voterAddress, setVoterAddress] = useState({});
+  const [voterAddress, setVoterAddress] = useState("");
 
   //handle]ing directors
   const handleDirector = async (event) => {
     event.preventDefault();
-    console.log(directorDetails);
     try {
       const contract = await getProviderContractOrSignerContract(true);
       console.log(contract);
@@ -36,13 +38,14 @@ export default function Admin() {
         );
       });
     } catch (err) {
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
-
       setLoading(false);
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
+      }
     }
   };
   const handleDirectorInputs = (event) => {
@@ -56,7 +59,6 @@ export default function Admin() {
   //teacher sections
   const handleTeacher = async (event) => {
     event.preventDefault();
-    console.log(teacherDetails);
     try {
       const contract = await getProviderContractOrSignerContract(true);
       console.log(contract);
@@ -74,13 +76,15 @@ export default function Admin() {
         );
       });
     } catch (err) {
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
-      }
-
+      console.log(allUsers);
       setLoading(false);
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
+      }
     }
   };
   const handleTeacherInputs = (event) => {
@@ -94,7 +98,6 @@ export default function Admin() {
   //student sections
   const handleStudent = async (event) => {
     event.preventDefault();
-    console.log(studentDetails);
     try {
       const contract = await getProviderContractOrSignerContract(true);
       console.log(contract);
@@ -113,10 +116,12 @@ export default function Admin() {
       });
     } catch (err) {
       setLoading(false);
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error);
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
       }
     }
   };
@@ -142,10 +147,12 @@ export default function Admin() {
       console.log(tx);
     } catch (err) {
       setLoading(false);
-      if (err.error === undefined) {
-        console.log("not connected");
-      } else {
-        console.error(err.error.message);
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
       }
     }
   };
@@ -299,7 +306,7 @@ export default function Admin() {
         </div>
 
         {/* //ban voter */}
-      <div className="my-4">
+        <div className="my-4">
           Ban and Unban
           <form onSubmit={handleBan}>
             <label className="form-label">Voter Address: </label>
@@ -316,24 +323,36 @@ export default function Admin() {
               <button
                 type="submit"
                 onClick={handleBanVoter}
-                className="btn btn-danger"
+                className="btn btn-danger btn-sm"
               >
                 Ban Voter
               </button>
               <button
                 type="submit"
                 onClick={handleUnBanVoter}
-                className="btn btn-secondary"
+                className="btn btn-secondary btn-sm"
               >
                 Unban Voter
               </button>
             </div>
           </form>
         </div>
-
       </div>
       {/* section for showing election   */}
-      <div className="col-8">
+      <div className="col-8 mt-0">
+        <ul className="nav nav-pills nav-fill mb-2">
+          <li className="nav-item">
+            <button className="active btn btn-secondary" aria-current="page">
+              Eection
+            </button>
+          </li>
+          <li className="nav-item">
+            <StudentOffcanvas />
+          </li>
+          <li className="nav-item">
+            <StaffOffcanvas />
+          </li>
+        </ul>
         <Election />
       </div>
     </div>
