@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { Contract, ContractFactory, Signer } from "ethers";
+import { Contract, ContractFactory } from "ethers";
 
 /**
  * @class TestHelper
