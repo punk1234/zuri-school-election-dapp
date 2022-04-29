@@ -14,7 +14,7 @@ export default function StaffOffcanvas() {
       </button>
       <div
         class="offcanvas offcanvas-start"
-        tabindex="-1"
+        tabIndex="-1"
         id="offcanvasWithBackdrop"
         aria-labelledby="offcanvasWithBackdropLabel"
       >

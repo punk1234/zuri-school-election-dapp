@@ -3,7 +3,7 @@ import { providerSignerContext } from "../context/ProviderOrSignerContext";
 import { electionContext } from "../context/ViewElectionContext";
 import Election from "./helpers/Election";
 import StudentOffcanvas from "./helpers/StudentOffcanvas";
-import StaffOffcanvas from "./StaffOffcanvas";
+import StaffOffcanvas from "./helpers/StaffOffcanvas";
 export default function Admin() {
   const { getProviderContractOrSignerContract } = useContext(
     providerSignerContext
