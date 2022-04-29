@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
+import { electionContext } from "../../context/ViewElectionContext";
 
 export default function StaffOffcanvas() {
+    const { banVoter, unbanVoter, allAddress} =
+    useContext(electionContext);
+
   return (
     <>
       <button
@@ -30,7 +34,11 @@ export default function StaffOffcanvas() {
           ></button>
         </div>
         <div class="offcanvas-body">
-          <p>.....</p>
+          <div className="row">
+          <div className="col-md-12">
+           
+          </div>
+          </div>
         </div>
       </div>
     </>

@@ -8,10 +8,9 @@ export default function Admin() {
   const { getProviderContractOrSignerContract } = useContext(
     providerSignerContext
   );
-  const { banVoter, unbanVoter, allUsers, setGeneralError } =
+  const { banVoter, unbanVoter,  loading, addDirector, addWeight, addStudent, addTeacher, setGeneralError } =
     useContext(electionContext);
 
-  const [loading, setLoading] = useState(false);
   const [directorDetails, setDirectorDetails] = useState({});
   const [teacherDetails, setTeacherDetails] = useState({});
   const [studentDetails, setStudentDetails] = useState({});
@@ -21,32 +20,8 @@ export default function Admin() {
   //handle]ing directors
   const handleDirector = async (event) => {
     event.preventDefault();
-    try {
-      const contract = await getProviderContractOrSignerContract(true);
-      console.log(contract);
-      setLoading(true);
-      const tx = await contract.addDirector(
-        directorDetails.name,
-        directorDetails.address
-      );
-      tx.wait();
-      setLoading(false);
-      console.log(tx);
-      contract.on("DirectorCreated", (dName, address) => {
-        console.log(
-          `a director with name: ${dName} and address ${address} is created`
-        );
-      });
-    } catch (err) {
-      setLoading(false);
-      try {
-        const { message } = err.error;
-        let errorMsg = message.split(":")[1];
-        setGeneralError(errorMsg);
-      } catch (error) {
-        console.log(err.reason);
-      }
-    }
+    addDirector(directorDetails)
+   
   };
   const handleDirectorInputs = (event) => {
     const name = event.target.name;
@@ -59,33 +34,8 @@ export default function Admin() {
   //teacher sections
   const handleTeacher = async (event) => {
     event.preventDefault();
-    try {
-      const contract = await getProviderContractOrSignerContract(true);
-      console.log(contract);
-      setLoading(true);
-      const tx = await contract.addTeacher(
-        teacherDetails.name,
-        teacherDetails.address
-      );
-      tx.wait();
-      setLoading(false);
-      console.log(tx);
-      contract.on("TeacherCreated", (Tname, address) => {
-        console.log(
-          `a director with name: ${Tname} and address ${address} is created`
-        );
-      });
-    } catch (err) {
-      console.log(allUsers);
-      setLoading(false);
-      try {
-        const { message } = err.error;
-        let errorMsg = message.split(":")[1];
-        setGeneralError(errorMsg);
-      } catch (error) {
-        console.log(err.reason);
-      }
-    }
+    addTeacher(teacherDetails)
+    
   };
   const handleTeacherInputs = (event) => {
     const name = event.target.name;
@@ -98,32 +48,8 @@ export default function Admin() {
   //student sections
   const handleStudent = async (event) => {
     event.preventDefault();
-    try {
-      const contract = await getProviderContractOrSignerContract(true);
-      console.log(contract);
-      setLoading(true);
-      const tx = await contract.addStudent(
-        studentDetails.name,
-        studentDetails.address
-      );
-      tx.wait();
-      setLoading(false);
-      console.log(tx);
-      contract.on("StudentCreated", (Sname, address) => {
-        console.log(
-          `a director with name: ${Sname} and address ${address} is created`
-        );
-      });
-    } catch (err) {
-      setLoading(false);
-      try {
-        const { message } = err.error;
-        let errorMsg = message.split(":")[1];
-        setGeneralError(errorMsg);
-      } catch (error) {
-        console.log(err.reason);
-      }
-    }
+    addStudent(studentDetails)
+    
   };
   const handleStudentInputs = (event) => {
     const name = event.target.name;
@@ -137,24 +63,7 @@ export default function Admin() {
   const handleWeight = async (event) => {
     event.preventDefault();
     console.log(weight);
-    try {
-      const contract = await getProviderContractOrSignerContract(true);
-      console.log(contract);
-      setLoading(true);
-      const tx = await contract.setWeight(weight.stakeHolder, weight.number);
-      tx.wait();
-      setLoading(false);
-      console.log(tx);
-    } catch (err) {
-      setLoading(false);
-      try {
-        const { message } = err.error;
-        let errorMsg = message.split(":")[1];
-        setGeneralError(errorMsg);
-      } catch (error) {
-        console.log(err.reason);
-      }
-    }
+    addWeight(weight)
   };
   const handleWeightInputs = (event) => {
     const name = event.target.name;

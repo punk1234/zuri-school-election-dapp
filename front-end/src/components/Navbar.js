@@ -9,13 +9,16 @@ function Navbar() {
     connectWallet,
     address,
   } = useContext(providerSignerContext);
-  const { activities } = useContext(electionContext);
+  const { activities, allAddress, setAllAddress } = useContext(electionContext);
   const { schoolName, setSchoolName } = useState("ZuriSchool");
   useEffect(() => {
+   
     const viewSchoolName = async () => {
+      console.log(await getProviderContractOrSignerContract())
       try {
         // let contract = getProviderContractOrSignerContract()
         const contract = await getProviderContractOrSignerContract();
+      
         let tx = await contract.schoolName();
         console.log(tx);
       } catch (err) {
@@ -23,7 +26,6 @@ function Navbar() {
       }
     };
     viewSchoolName();
-    
   }, [walletConnected]);
 
   const displayAcivities = () => {

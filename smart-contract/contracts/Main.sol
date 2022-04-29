@@ -114,19 +114,19 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         * @notice add students to the system
         * @dev add students to the system from a list of addresses and names
     */
-    function addStudents(address[] memory _students, string[] memory _names) external isChairperson {
-        require(_names.length > 0, "0 names");
-        require(_students.length > 0, "0 addresses");
-        require(_students.length == _names.length, "names != addresses");
+    // function addStudents(address[] memory _students, string[] memory _names) external isChairperson {
+    //     require(_names.length > 0, "0 names");
+    //     require(_students.length > 0, "0 addresses");
+    //     require(_students.length == _names.length, "names != addresses");
 
-        for(uint256 i = 0; i < _students.length; i++) {
-            require(bytes(voters[_students[i]].name).length == 0, "student already exist");
-            Voter memory _voter = Voter(_names[i], true, Stakeholder.STUDENT);
-            _addVoter(_students[i], _voter);
-        }
+    //     for(uint256 i = 0; i < _students.length; i++) {
+    //         require(bytes(voters[_students[i]].name).length == 0, "student already exist");
+    //         Voter memory _voter = Voter(_names[i], true, Stakeholder.STUDENT);
+    //         _addVoter(_students[i], _voter);
+    //     }
 
        
-    }
+    // }
     
 
     // @function that is used to create a teacher voter
@@ -144,17 +144,17 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         * @notice add teachers to the system
         * @dev add teachers to the system from a list of addresses and names
      */
-    function addTeachers(address[] memory _teachers, string[] memory _names) public isChairperson {
-        require(_names.length > 0, "0 names");
-        require(_teachers.length > 0, "0 addresses");
-        require(_teachers.length == _names.length, "names != addresses");
+    // function addTeachers(address[] memory _teachers, string[] memory _names) public isChairperson {
+    //     require(_names.length > 0, "0 names");
+    //     require(_teachers.length > 0, "0 addresses");
+    //     require(_teachers.length == _names.length, "names != addresses");
 
-        for(uint256 i = 0; i < _teachers.length; i++) {
-            require(bytes(voters[_teachers[i]].name).length == 0, "teacher already exist");
-            Voter memory _voter = Voter(_names[i], true, Stakeholder.TEACHER);
-            _addVoter(_teachers[i], _voter);
-        }
-    }
+    //     for(uint256 i = 0; i < _teachers.length; i++) {
+    //         require(bytes(voters[_teachers[i]].name).length == 0, "teacher already exist");
+    //         Voter memory _voter = Voter(_names[i], true, Stakeholder.TEACHER);
+    //         _addVoter(_teachers[i], _voter);
+    //     }
+    // }
 
 
     // @function that is used to create a director voter
@@ -172,17 +172,17 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         * @notice add directors to the system
         * @dev add directors to the system from a list of addresses and names
      */
-    function addDirectors(address[] memory _directors, string[] memory _names) public isChairperson {
-        require(_names.length > 0, "0 names");
-        require(_directors.length > 0, "0 addresses");
-        require(_directors.length == _names.length, "names != addresses");
+    // function addDirectors(address[] memory _directors, string[] memory _names) public isChairperson {
+    //     require(_names.length > 0, "0 names");
+    //     require(_directors.length > 0, "0 addresses");
+    //     require(_directors.length == _names.length, "names != addresses");
 
-        for(uint256 i = 0; i < _directors.length; i++) {
-            require(bytes(voters[_directors[i]].name).length == 0, "director already exist");
-            Voter memory _voter = Voter(_names[i], true, Stakeholder.DIRECTOR);
-            _addVoter(_directors[i], _voter);
-        }
-    }
+    //     for(uint256 i = 0; i < _directors.length; i++) {
+    //         require(bytes(voters[_directors[i]].name).length == 0, "director already exist");
+    //         Voter memory _voter = Voter(_names[i], true, Stakeholder.DIRECTOR);
+    //         _addVoter(_directors[i], _voter);
+    //     }
+    // }
 
     /**
      * @notice check if address has been registered to vote
@@ -239,19 +239,17 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
     // @dev this function is used for creating an election either by a teacher or director
     function createElection(
         string memory _name, 
-        uint256 _num_choices, 
         string memory _description, 
-        string[] memory _choices, 
+        string[] calldata _choices,
         uint256 numHours
     ) public isDirectorOrTeacher {
 
-        require(_num_choices > 1, "must have more than one choice to create election");
-        require(_num_choices == _choices.length, "number of proposals must equal number of choices");
-    
+       require(_choices.length > 1, "choice must be 2 at list");
+        uint256 _num_choices = _choices.length;
         uint _id = electionCount;
-        uint expirationTime = block.timestamp + (numHours * (60*60));
+        uint expirationTime = numHours * (60*60);
 
-        Election memory _election = Election(_id, _num_choices, _name, _description, false, false);
+        Election memory _election = Election(_id, _num_choices, _name, _description, false, false, 0, 0);
         for (uint256 i = 0; i < _num_choices; i++) {
             Proposal memory _proposal = Proposal(_choices[i], 0);
             choices[_id].push(_proposal);
@@ -264,11 +262,18 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         emit BallotCreated(_id, _name, expirationTime);
     }
 
+    // modifier for checking eection
+    modifier electionStatus(uint256 _electionId){
+        if(elections[_electionId].stopedAt == elections[_electionId].startedAt){
+                revert("election has not started");
+            }
+        require(elections[_electionId].stopedAt >= block.timestamp, "election period has expired");
+        require(elections[_electionId].active, "election must be active");
+        require(!elections[_electionId].computed, "election result has already been computed");
+            _;
+    }
     // @dev this function is used to cast the vote of an election
-    function castVote(uint256 _electionId, uint256 _proposalIndex) external {
-        require(elections[_electionId].active == true, "election must be active to cast a vote");
-        require(elections[_electionId].computed == false, "election result has already been computed, can not cast vote");
-        require(timers[_electionId] >= block.timestamp, "election period has expired can not cast vote");
+    function castVote(uint256 _electionId, uint256 _proposalIndex) external electionStatus(_electionId) {
         require(voters[msg.sender].canVote == true, "you must be allowed to vote to perform this operation");
         require(hasVoted[_electionId][msg.sender] == false, "you have already voted for this election");
 
@@ -278,21 +283,25 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
 
         emit VoteCasted(_electionId, msg.sender);
     }
+    //function to return the time remaining for each election
+     function electionTimeLeft(uint256 _electionId)public view electionStatus(_electionId) returns(uint256){
+         
+        uint256 timeLeft =   elections[_electionId].stopedAt - block.timestamp; 
+        return timeLeft;
+     }
 
     // @function used to start an election. should only be called by chairperson todo @cptMoh
     function startElection(uint256 _electionId) external isChairperson {
         require(!elections[_electionId].active, "already started election cannot be started again");
-
+        require(!elections[_electionId].computed, "election result has already been computed");
         elections[_electionId].active = true;
         elections[_electionId].startedAt = block.timestamp;
-
+        elections[_electionId].stopedAt = timers[_electionId] + block.timestamp;
         emit BallotStarted(_electionId, elections[_electionId].name, block.timestamp);
     }
 
     // @dev this is a function to stop an election
-    function stopElection(uint256 _electionId) public isChairperson {
-        require(elections[_electionId].active, "already stopped election cannot be stopped again");
-
+    function stopElection(uint256 _electionId) public isChairperson electionStatus(_electionId) {
         elections[_electionId].active = false;
         elections[_electionId].stopedAt = block.timestamp;
         timers[_electionId] = block.timestamp;
@@ -370,7 +379,6 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
      * @param _electionId the id of the election you want to compile the results for
      */
     function compileResults(uint256 _electionId) external isDirectorOrTeacher {
-        stopElection(_electionId);
         elections[_electionId].computed = true;
 
         Proposal memory _max = choices[_electionId][0];

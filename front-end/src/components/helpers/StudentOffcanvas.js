@@ -1,6 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
+import { electionContext } from "../../context/ViewElectionContext";
 
 export default function StudentOffcanvas() {
+  const { banVoter, unbanVoter, allAddress, addStudent, addTeacher } =
+    useContext(electionContext);
+
+  const displayAddress = allAddress.map((address) => {
+    <div key={address}>
+      <ul>
+        <li>{`${String(address).slice(0, 5)}..${String(address).slice(
+          -5
+        )}`}</li>
+      </ul>
+    </div>;
+  });
   return (
     <>
       <button
@@ -10,7 +23,7 @@ export default function StudentOffcanvas() {
         data-bs-target="#offcanvasWithBothOptions"
         aria-controls="offcanvasWithBothOptions"
       >
-        All Students
+        All Users
       </button>
       <div
         className="offcanvas offcanvas-start"
@@ -21,7 +34,7 @@ export default function StudentOffcanvas() {
       >
         <div className="offcanvas-header">
           <h5 className="offcanvas-title" id="offcanvasWithBothOptionsLabel">
-            All Students
+            All Users
           </h5>
           <button
             type="button"
@@ -30,11 +43,7 @@ export default function StudentOffcanvas() {
             aria-label="Close"
           ></button>
         </div>
-        <div className="offcanvas-body">
-          <p>
-            Try scrolling the rest of the page to see this option in action.
-          </p>
-        </div>
+        <div className="offcanvas-body">{displayAddress}</div>
       </div>
     </>
   );
