@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { providerSignerContext } from "./ProviderOrSignerContext";
 
-
 export const electionContext = createContext();
 const ViewElectionContext = (props) => {
   const { getProviderContractOrSignerContract, address, walletConnected } =
@@ -21,9 +20,9 @@ const ViewElectionContext = (props) => {
   const [chairmanAddress, setChairmainAddress] = useState("");
   const [showBanVoter, setShowBanVoter] = useState("");
   const [showUnBanVoter, setShowUnBanVoter] = useState("");
-  const [generalError, setGeneralError] = useState("")
-  const [activities, setActivities] = useState([])
-  const [allUsers, setAllUsers] = useState({})
+  const [generalError, setGeneralError] = useState("");
+  const [activities, setActivities] = useState([]);
+  const [allUsers, setAllUsers] = useState({});
 
   //profile details
   const [profileDetails, setProfileDetails] = useState(null);
@@ -46,8 +45,6 @@ const ViewElectionContext = (props) => {
     }
   };
 
-  
-
   //get charman address
   const getChairmanAddress = async () => {
     try {
@@ -65,7 +62,7 @@ const ViewElectionContext = (props) => {
   };
 
   // function to view the results of an election
-  const viewResult = React.useCallback( async (electionId) => {
+  const viewResult = React.useCallback(async (electionId) => {
     try {
       // let contract = getProviderContractOrSignerContract()
       const contract = await getProviderContractOrSignerContract(true);
@@ -81,12 +78,11 @@ const ViewElectionContext = (props) => {
         return [...prevState, response];
       });
     } catch (err) {
-        let errReason = err.reason 
-        console.log(errReason)
-        setGeneralError(errReason)
-       
+      let errReason = err.reason;
+      console.log(errReason);
+      setGeneralError(errReason);
     }
-  })
+  });
 
   //using the address to get the user details
   const getUserAddressDetails = useCallback(async (address) => {
@@ -98,12 +94,12 @@ const ViewElectionContext = (props) => {
         name: tx.name,
         canVote: tx.canVote,
         userType: tx.usertype,
-        address: address
+        address: address,
       };
       setProfileDetails(res);
-      setAllUsers(prevState =>  ({...prevState, ...res}))
+      setAllUsers((prevState) => ({ ...prevState, ...res }));
     } catch (err) {
-        console.log(err.reason)
+      console.log(err.reason);
     }
   }, []);
 
@@ -119,7 +115,7 @@ const ViewElectionContext = (props) => {
       console.log("election started", tx);
       setShowStartElection(`The election with id ${electionId} has started`);
     } catch (err) {
-        console.log(err.reason)
+      console.log(err.reason);
     }
   };
   //stop election
@@ -134,7 +130,7 @@ const ViewElectionContext = (props) => {
       console.log("election stopped", tx);
       setShowStopElection(`The election with id ${electionId} has stoped`);
     } catch (err) {
-        console.log(err.reason)
+      console.log(err.reason);
     }
   };
 
@@ -151,32 +147,34 @@ const ViewElectionContext = (props) => {
       });
       viewResult(electionId);
     } catch (err) {
-        console.log(err.reason)
+      console.log(err.reason);
     }
   };
 
   // function to cast a vote on a proposal
-  const castVote = React.useCallback( async (castElectionId, proposals, proposal) => {
-    const proposalIdex = proposals.indexOf(proposal);
-    try {
-      // let contract = getProviderContractOrSignerContract(true)
-      const contract = await getProviderContractOrSignerContract(true);
-      let response = await contract.castVote(castElectionId, proposalIdex);
+  const castVote = React.useCallback(
+    async (castElectionId, proposals, proposal) => {
+      const proposalIdex = proposals.indexOf(proposal);
+      try {
+        // let contract = getProviderContractOrSignerContract(true)
+        const contract = await getProviderContractOrSignerContract(true);
+        let response = await contract.castVote(castElectionId, proposalIdex);
 
-      console.log(response);
-      contract.on("VoteCasted", (electId, address) => {
-        console.log("u casted a vote", electId, address);
-      });
-    } catch (err) {
-        const {message} = err.error
-        let errorMsg = message.split(':')[1]
-        setGeneralError(errorMsg)
-        // setGeneralError(prevState => {
-        //   return [...prevState, errorMsg]
-        // })
-        console.log(errorMsg)
+        console.log(response);
+        contract.on("VoteCasted", (electId, address) => {
+          console.log("u casted a vote", electId, address);
+        });
+      } catch (err) {
+        try {
+          const { message } = err.error;
+          let errorMsg = message.split(":")[1];
+          setGeneralError(errorMsg);
+        } catch (error) {
+          console.log(err.reason);
+        }
+      }
     }
-  })
+  );
 
   // ban and un ban
   const banVoter = async (voterAddress) => {
@@ -187,23 +185,23 @@ const ViewElectionContext = (props) => {
 
       console.log(response);
       contract.on("BanVoter", (name, voter) => {
-        console.log(`the voter ${name} with address ${voter} has being band`)
-        setShowBanVoter(`the voter ${name} with address ${voter} has being band`)
-
-      })
+        console.log(`the voter ${name} with address ${voter} has being band`);
+        setShowBanVoter(
+          `the voter ${name} with address ${voter} has being band`
+        );
+      });
     } catch (err) {
-       try{
-        const {message} = err.error
-        let errorMsg = message.split(':')[1]
-        setGeneralError(errorMsg)
-
-      } catch(error){
-        console.log(err.reason)
-        setGeneralError(err.reason)
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
+        setGeneralError(err.reason);
       }
     }
   };
-   const unbanVoter = async (voterAddress) => {
+  const unbanVoter = async (voterAddress) => {
     try {
       // let contract = getProviderContractOrSignerContract(true)
       const contract = await getProviderContractOrSignerContract(true);
@@ -211,21 +209,21 @@ const ViewElectionContext = (props) => {
 
       console.log(response);
       contract.on("UnbanVoter", (name, voter) => {
-        console.log(`the voter ${name} with address ${voter} has being unban`)
-        setShowUnBanVoter(`the voter ${name} with address ${voter} has being unban`)
-      })
+        console.log(`the voter ${name} with address ${voter} has being unban`);
+        setShowUnBanVoter(
+          `the voter ${name} with address ${voter} has being unban`
+        );
+      });
     } catch (err) {
-        try{
-        const {message} = err.error
-        let errorMsg = message.split(':')[1]
-        setGeneralError(errorMsg)
-
-      } catch(error){
-        console.log(err.reason)
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
       }
     }
   };
-
 
   useEffect(() => {
     const viewElection = async () => {
@@ -286,7 +284,7 @@ const ViewElectionContext = (props) => {
         generalError,
         //activities
         activities,
-        setActivities
+        setActivities,
       }}
     >
       {props.children}
