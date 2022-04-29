@@ -28,8 +28,8 @@ export default function Dashboard() {
       {profileDetails ? (
         <div className="row  g-3">
           <div className="col-md-9">
-           {/* {chairmanAddress === address ? <Admin /> : display()} */}
-           <Admin />
+           {chairmanAddress === address ? <Admin /> : display()}
+        
           </div>
           <div className="col-md-3">
             <NoticeBoard />

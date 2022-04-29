@@ -27,9 +27,10 @@ export default function TeacherDirector() {
   };
   const handleElectionCreation = async (e) => {
     e.preventDefault();
-    const proposalName = electionDetails.proposalName.split(",");
-    const proposalNumber = proposalName.length;
-    console.log(proposalNumber);
+    const proposals = electionDetails.proposalName.split(",");
+    //remove this
+    const proposalNumber = proposals.length;
+    console.log(proposals);
     try {
       setLoading(true);
       const contract = await getProviderContractOrSignerContract(true);
@@ -37,7 +38,7 @@ export default function TeacherDirector() {
         electionDetails.name,
         proposalNumber,
         electionDetails.description,
-        proposalName,
+        proposals,
         electionDetails.hours
       );
 

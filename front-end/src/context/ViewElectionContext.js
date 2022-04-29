@@ -11,7 +11,7 @@ export const electionContext = createContext();
 const ViewElectionContext = (props) => {
   const { getProviderContractOrSignerContract, address, walletConnected } =
     useContext(providerSignerContext);
-
+   const [loading, setLoading] = useState(false);
   const [electionResult, setElectionResult] = useState([]);
   const [viewElectionResponse, setViewElectionResponse] = useState([]);
   const [totalElection, setTotalElection] = useState(null);
@@ -22,7 +22,8 @@ const ViewElectionContext = (props) => {
   const [showUnBanVoter, setShowUnBanVoter] = useState("");
   const [generalError, setGeneralError] = useState("");
   const [activities, setActivities] = useState([]);
-  const [allUsers, setAllUsers] = useState({});
+  const [allUsers, setAllUsers] = useState([]);
+   const [allAddress, setAllAddress] = useState([]);
 
   //profile details
   const [profileDetails, setProfileDetails] = useState(null);
@@ -97,7 +98,7 @@ const ViewElectionContext = (props) => {
         address: address,
       };
       setProfileDetails(res);
-      setAllUsers((prevState) => ({ ...prevState, ...res }));
+      setAllUsers((prevState) => ([ ...prevState, res ]));
     } catch (err) {
       console.log(err.reason);
     }
@@ -224,7 +225,116 @@ const ViewElectionContext = (props) => {
       }
     }
   };
+  //adding directors
+  const addDirector = async (directorDetails) => {
+    try {
+      const contract = await getProviderContractOrSignerContract(true);
+      console.log(contract);
+      setLoading(true);
+      const tx = await contract.addDirector(
+        directorDetails.name,
+        directorDetails.address
+      );
+      tx.wait();
+      setLoading(false);
+      console.log(tx);
+      contract.on("DirectorCreated", (dName, address) => {
+        console.log(
+          `a director with name: ${dName} and address ${address} is created`
+        );
+      });
+    } catch (err) {
+      setLoading(false);
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
+      }
+    }
+  }
 
+  //add teacher
+  const addTeacher = async (teacherDetails) => {
+    try {
+      const contract = await getProviderContractOrSignerContract(true);
+      console.log(contract);
+      setLoading(true);
+      const tx = await contract.addTeacher(
+        teacherDetails.name,
+        teacherDetails.address
+      );
+      tx.wait();
+      setLoading(false);
+      console.log(tx);
+      contract.on("TeacherCreated", (Tname, address) => {
+        console.log(
+          `a director with name: ${Tname} and address ${address} is created`
+        );
+      });
+    } catch (err) {
+      console.log(allUsers)
+      setLoading(false);
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
+      }
+    }
+  }
+  //add student
+  const addStudent = async(studentDetails) => {
+    try {
+      const contract = await getProviderContractOrSignerContract(true);
+      console.log(contract);
+      setLoading(true);
+      const tx = await contract.addStudent(
+        studentDetails.name,
+        studentDetails.address
+      );
+      tx.wait();
+      setLoading(false);
+      console.log(tx);
+      contract.on("StudentCreated", (Sname, address) => {
+        console.log(
+          `a director with name: ${Sname} and address ${address} is created`
+        );
+      });
+    } catch (err) {
+      setLoading(false);
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
+      }
+    }
+  }
+  //add weight
+ const addWeight = async(weight) => {
+   try {
+      const contract = await getProviderContractOrSignerContract(true);
+      console.log(contract);
+      setLoading(true);
+      const tx = await contract.setWeight(weight.stakeHolder, weight.number);
+      tx.wait();
+      setLoading(false);
+      console.log(tx);
+    } catch (err) {
+      setLoading(false);
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
+      }
+    }
+ }
   useEffect(() => {
     const viewElection = async () => {
       electionCount();
@@ -266,9 +376,16 @@ const ViewElectionContext = (props) => {
         electionCount,
         startElection,
         stopElection,
+        addWeight,
+        //adding staff and student
+        addDirector, 
+        addStudent, 
+        addTeacher,
+        loading,
         profileDetails,
         compileResults,
         setGeneralError,
+
         castVote,
         banVoter,
         unbanVoter,
@@ -280,6 +397,8 @@ const ViewElectionContext = (props) => {
 
         //getting all users
         allUsers,
+        allAddress, 
+        setAllAddress,
         //error handle
         generalError,
         //activities
