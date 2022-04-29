@@ -25,6 +25,8 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         string description;
         bool active;
         bool computed;
+        uint256 startedAt;
+        uint256 stopedAt;
     }
 
     // @dev this is used to keep track of the count of elections
@@ -223,7 +225,8 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         require(!elections[_electionId].active, "already started election cannot be started again");
 
         elections[_electionId].active = true;
-        
+        elections[_electionId].startedAt = block.timestamp;
+
         emit BallotStarted(_electionId, elections[_electionId].name, block.timestamp);
     }
 
@@ -232,6 +235,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         require(elections[_electionId].active, "already stopped election cannot be stopped again");
 
         elections[_electionId].active = false;
+        elections[_electionId].stopedAt = block.timestamp;
         timers[_electionId] = block.timestamp;
 
         emit BallotStopped(_electionId, elections[_electionId].name, block.timestamp);
@@ -246,7 +250,10 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         string memory name, 
         string[] memory props, 
         bool isActive, 
-        bool isComputed
+        bool isComputed,
+        uint256 startedAt,
+        uint256 stopedAt
+
     ) {
         string[] memory proposals = new string[](choices[_electionId].length);
         for(uint256 i=0; i < choices[_electionId].length; i++) {
@@ -256,7 +263,9 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
             elections[_electionId].name, 
             proposals, 
             elections[_electionId].active, 
-            elections[_electionId].computed
+            elections[_electionId].computed,
+            elections[_electionId].startedAt,
+            elections[_electionId].stopedAt
         );
     }
 
