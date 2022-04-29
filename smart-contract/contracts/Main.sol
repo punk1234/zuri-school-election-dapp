@@ -103,6 +103,25 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         emit StudentCreated(_name, _student);
     }
 
+    /**
+        * @notice add students to the system
+        * @dev add students to the system from a list of addresses and names
+    */
+    function addStudents(address[] memory _students, string[] memory _names) external isChairperson {
+        require(_names.length > 0, "0 names");
+        require(_students.length > 0, "0 addresses");
+        require(_students.length == _names.length, "names != addresses");
+
+        for(uint256 i = 0; i < _students.length; i++) {
+            require(bytes(voters[_students[i]].name).length == 0, "student already exist");
+            Voter memory _voter = Voter(_names[i], true, Stakeholder.STUDENT);
+            _addVoter(_students[i], _voter);
+        }
+
+       
+    }
+    
+
     // @function that is used to create a teacher voter
     function addTeacher(string memory _name, address _teacher) public isChairperson {
         require(bytes(_name).length > 0, "teacher name is not valid");
@@ -114,6 +133,23 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         emit TeacherCreated(_name, _teacher);
     }
 
+    /**
+        * @notice add teachers to the system
+        * @dev add teachers to the system from a list of addresses and names
+     */
+    function addTeachers(address[] memory _teachers, string[] memory _names) public isChairperson {
+        require(_names.length > 0, "0 names");
+        require(_teachers.length > 0, "0 addresses");
+        require(_teachers.length == _names.length, "names != addresses");
+
+        for(uint256 i = 0; i < _teachers.length; i++) {
+            require(bytes(voters[_teachers[i]].name).length == 0, "teacher already exist");
+            Voter memory _voter = Voter(_names[i], true, Stakeholder.TEACHER);
+            _addVoter(_teachers[i], _voter);
+        }
+    }
+
+
     // @function that is used to create a director voter
     function addDirector(string memory _name, address _director) public isChairperson {
         require(bytes(_name).length > 0, "director name is not valid");
@@ -123,6 +159,22 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         _addVoter(_director, _voter);
 
         emit DirectorCreated(_name, _director);
+    }
+
+    /**
+        * @notice add directors to the system
+        * @dev add directors to the system from a list of addresses and names
+     */
+    function addDirectors(address[] memory _directors, string[] memory _names) public isChairperson {
+        require(_names.length > 0, "0 names");
+        require(_directors.length > 0, "0 addresses");
+        require(_directors.length == _names.length, "names != addresses");
+
+        for(uint256 i = 0; i < _directors.length; i++) {
+            require(bytes(voters[_directors[i]].name).length == 0, "director already exist");
+            Voter memory _voter = Voter(_names[i], true, Stakeholder.DIRECTOR);
+            _addVoter(_directors[i], _voter);
+        }
     }
 
     /**
