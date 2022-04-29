@@ -19,7 +19,8 @@ class TestHelper {
         );
 
         const zuriVotingContract: Contract = await ZuriSchoolVoting.deploy(
-            "ZuriSchool"
+            "ZuriSchool",
+            (await ethers.getSigners())[0].getAddress()
         );
 
         await zuriVotingContract.deployed();

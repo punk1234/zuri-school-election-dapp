@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import MockData from "./__mocks__";
+import TestHelper from "./helpers";
 import { Signer, Contract } from "ethers";
 
 describe("VOTE TESTS", function () {
@@ -10,11 +11,7 @@ describe("VOTE TESTS", function () {
 
   before(async function () {
     accounts = await ethers.getSigners();
-
-    const ZuriSchoolVoting = await ethers.getContractFactory("ZuriSchoolVoting");
-    zuriVotingContract = await ZuriSchoolVoting.deploy("ZuriSchool");
-
-    await zuriVotingContract.deployed();
+    zuriVotingContract = await TestHelper.deployContract();
 
     await expect(
         zuriVotingContract
