@@ -15,7 +15,7 @@ describe("VOTE TESTS", function () {
 
     await expect(
         zuriVotingContract
-          .createElection("election 1", 2, "desc goes here ...", ["Candidate 1", "Candidate 2"], 1)
+          .createElection("election 1", "desc goes here ...", ["Candidate 1", "Candidate 2"], 1)
     ).to.emit(zuriVotingContract, "BallotCreated");
   });
 
@@ -23,7 +23,7 @@ describe("VOTE TESTS", function () {
 
     it("Check that election vote casting throws error when election is not started", async function () {
         await expect(zuriVotingContract.castVote(0, 0))
-            .to.be.revertedWith("election must be active to cast a vote");
+            .to.be.revertedWith("election has not started");
     });
 
     it("Check that election vote is casted with valid data & emits VoteCasted event", async function () {

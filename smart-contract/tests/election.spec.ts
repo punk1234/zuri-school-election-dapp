@@ -20,7 +20,6 @@ describe("ELECTION TESTS", function () {
         await expect(
             zuriVotingContract.createElection(
                 "election 001",
-                3, // no. of candidates allowed
                 "election 001 description goes here ...",
                 [ "Candidate 1", "Candidate 2", "Candidate 3" ],
                 1
@@ -40,28 +39,15 @@ describe("ELECTION TESTS", function () {
         expect(computed).to.equal(false);
     });
 
-    it("Check that createElection throws error when no candidates & lists does not match", async function () {
-        await expect(
-            zuriVotingContract.createElection(
-                "election 001",
-                3, // no. of candidates allowed
-                "election 001 description goes here ...",
-                [],
-                1
-            )
-        ).to.be.revertedWith("number of proposals must equal number of choices");
-    });
-
     it("Check that createElection throws error when only 1 candidate is provided", async function () {
         await expect(
             zuriVotingContract.createElection(
                 "election 001",
-                1, // no. of candidates allowed
                 "election 001 description goes here ...",
                 [ "Candidate 1" ],
                 1
             )
-        ).to.be.revertedWith("must have more than one choice to create election");
+        ).to.be.revertedWith("choice must be atleast 2");
     });
 
   });
@@ -97,7 +83,7 @@ describe("ELECTION TESTS", function () {
 
     it("Check that election that has been stopped throws error on stopElection", async function () {
         await expect(zuriVotingContract.stopElection(0))
-            .to.be.revertedWith("already stopped election cannot be stopped again");
+            .to.be.revertedWith("election has not started");
     });
 
   });
