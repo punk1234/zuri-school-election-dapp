@@ -11,22 +11,22 @@ function Navbar() {
   } = useContext(providerSignerContext);
   const { activities, allAddress, setAllAddress } = useContext(electionContext);
   const { schoolName, setSchoolName } = useState("ZuriSchool");
-  useEffect(() => {
+  // useEffect(() => {
    
-    const viewSchoolName = async () => {
-      console.log(await getProviderContractOrSignerContract())
-      try {
-        // let contract = getProviderContractOrSignerContract()
-        const contract = await getProviderContractOrSignerContract();
+  //   const viewSchoolName = async () => {
+  //     console.log(await getProviderContractOrSignerContract())
+  //     try {
+  //       // let contract = getProviderContractOrSignerContract()
+  //       const contract = await getProviderContractOrSignerContract();
       
-        let tx = await contract.schoolName();
-        console.log(tx);
-      } catch (err) {
-        console.error(err.error);
-      }
-    };
-    viewSchoolName();
-  }, [walletConnected]);
+  //       let tx = await contract.schoolName();
+  //       console.log(tx);
+  //     } catch (err) {
+  //       console.error(err.error);
+  //     }
+  //   };
+  //   viewSchoolName();
+  // }, [walletConnected]);
 
   const displayAcivities = () => {
     if(activities.length <= 0){
@@ -34,7 +34,7 @@ function Navbar() {
     }
     return activities.map(activity => {
       return <li key={activity.hash}>
-              <a  target="_blank" href={`https://rinkeby.etherscan.io/tx/${activity.hash}`}>View on Chain</a>
+              <a  target="_blank" href={`https://mumbai.polygonscan.com/tx/${activity.hash}`}>View on Chain</a>
       </li>
     })
   }

@@ -11,7 +11,7 @@ export const electionContext = createContext();
 const ViewElectionContext = (props) => {
   const { getProviderContractOrSignerContract, address, walletConnected } =
     useContext(providerSignerContext);
-   const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [electionResult, setElectionResult] = useState([]);
   const [viewElectionResponse, setViewElectionResponse] = useState([]);
   const [totalElection, setTotalElection] = useState(null);
@@ -23,7 +23,9 @@ const ViewElectionContext = (props) => {
   const [generalError, setGeneralError] = useState("");
   const [activities, setActivities] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
-   const [allAddress, setAllAddress] = useState([]);
+  const [allAddress, setAllAddress] = useState([]);
+  const [electionTime, setElectionTime] = useState(null);
+  // const [toggleRender, setToggleRender] = useState(false);
 
   //profile details
   const [profileDetails, setProfileDetails] = useState(null);
@@ -32,6 +34,8 @@ const ViewElectionContext = (props) => {
     try {
       // let contract = getProviderContractOrSignerContract()
       const contract = await getProviderContractOrSignerContract();
+
+
       let tx = await contract.electionCount();
 
       setTotalElection(await tx.toNumber());
@@ -46,6 +50,28 @@ const ViewElectionContext = (props) => {
     }
   };
 
+  const getTimeleft = async (electionId) => {
+    let time;
+    try {
+      // let contract = getProviderContractOrSignerContract()
+      const contract = await getProviderContractOrSignerContract();
+
+      let tx = await contract.electionTimeLeft(electionId);
+
+      setElectionTime(await tx.toNumber());
+      time = await tx.toNumber();
+    } catch (err) {
+      time = 0;
+      try {
+        const { message } = err.error;
+        let errorMsg = message.split(":")[1];
+        setGeneralError(errorMsg);
+      } catch (error) {
+        console.log(err.reason);
+      }
+    }
+    return time;
+  };
   //get charman address
   const getChairmanAddress = async () => {
     try {
@@ -98,7 +124,7 @@ const ViewElectionContext = (props) => {
         address: address,
       };
       setProfileDetails(res);
-      setAllUsers((prevState) => ([ ...prevState, res ]));
+     setAllUsers((prevState) => ([ ...prevState, res ]));
     } catch (err) {
       console.log(err.reason);
     }
@@ -115,11 +141,13 @@ const ViewElectionContext = (props) => {
       let tx = await contract.startElection(electionId);
       console.log("election started", tx);
       setShowStartElection(`The election with id ${electionId} has started`);
+      // setToggleRender((prevState) => !prevState);
     } catch (err) {
       console.log(err.reason);
     }
   };
-  //stop election
+  //stop electionstartedAt: tx.startedAt,
+            // stoppedAt: tx.stoppedAt,
   const stopElection = async (electionId) => {
     //for starting election and stoping election
 
@@ -130,6 +158,7 @@ const ViewElectionContext = (props) => {
       let tx = await contract.stopElection(electionId);
       console.log("election stopped", tx);
       setShowStopElection(`The election with id ${electionId} has stoped`);
+      // setToggleRender((prevState) => !prevState);
     } catch (err) {
       console.log(err.reason);
     }
@@ -145,6 +174,7 @@ const ViewElectionContext = (props) => {
       console.log(tx);
       contract.on("BallotResultCompiled", (electId, electName, time) => {
         console.log("result compiled", electId, electName, time);
+        // setToggleRender((prevState) => !prevState);
       });
       viewResult(electionId);
     } catch (err) {
@@ -187,6 +217,7 @@ const ViewElectionContext = (props) => {
       console.log(response);
       contract.on("BanVoter", (name, voter) => {
         console.log(`the voter ${name} with address ${voter} has being band`);
+        // setToggleRender(prevState => !prevState)
         setShowBanVoter(
           `the voter ${name} with address ${voter} has being band`
         );
@@ -210,6 +241,7 @@ const ViewElectionContext = (props) => {
 
       console.log(response);
       contract.on("UnbanVoter", (name, voter) => {
+        // setToggleRender(prevState => !prevState)
         console.log(`the voter ${name} with address ${voter} has being unban`);
         setShowUnBanVoter(
           `the voter ${name} with address ${voter} has being unban`
@@ -286,7 +318,7 @@ const ViewElectionContext = (props) => {
     }
   }
   //add student
-  const addStudent = async(studentDetails) => {
+  const addStudent = async (studentDetails) => {
     try {
       const contract = await getProviderContractOrSignerContract(true);
       console.log(contract);
@@ -315,8 +347,8 @@ const ViewElectionContext = (props) => {
     }
   }
   //add weight
- const addWeight = async(weight) => {
-   try {
+  const addWeight = async (weight) => {
+    try {
       const contract = await getProviderContractOrSignerContract(true);
       console.log(contract);
       setLoading(true);
@@ -334,7 +366,7 @@ const ViewElectionContext = (props) => {
         console.log(err.reason);
       }
     }
- }
+  }
   useEffect(() => {
     const viewElection = async () => {
       electionCount();
@@ -350,6 +382,8 @@ const ViewElectionContext = (props) => {
             proposals: tx.props,
             isActive: tx.isActive,
             isComputed: tx.isComputed,
+            // startedAt: tx.startedAt,
+            // stoppedAt: tx.stoppedAt,
           };
           response.push(data);
         }
@@ -378,13 +412,16 @@ const ViewElectionContext = (props) => {
         stopElection,
         addWeight,
         //adding staff and student
-        addDirector, 
-        addStudent, 
+        addDirector,
+        addStudent,
         addTeacher,
         loading,
         profileDetails,
         compileResults,
         setGeneralError,
+
+        getTimeleft,
+        electionTime,
 
         castVote,
         banVoter,
@@ -397,7 +434,7 @@ const ViewElectionContext = (props) => {
 
         //getting all users
         allUsers,
-        allAddress, 
+        allAddress,
         setAllAddress,
         //error handle
         generalError,
