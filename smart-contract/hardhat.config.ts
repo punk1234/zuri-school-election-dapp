@@ -1,5 +1,6 @@
 import "solidity-coverage";
 import dotenv from "dotenv";
+import "hardhat-gas-reporter";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-ganache";
@@ -19,7 +20,7 @@ module.exports = {
         rinkeby: {
             url: API_URL,
             accounts: [`${PRIVATE_KEY}`]
-        },
+        }
     },
     etherscan: {
         apiKey: ETHERSCAN_API_KEY
