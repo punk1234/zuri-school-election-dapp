@@ -4,7 +4,7 @@ import MockData from "./__mocks__";
 import TestHelper from "./helpers";
 import { Signer, Contract } from "ethers";
 
-describe("VOTE TESTS", function () {
+describe("VOTE RESULTS TESTS", function () {
 
   let accounts: Signer[];
   let zuriVotingContract: Contract;
@@ -15,7 +15,7 @@ describe("VOTE TESTS", function () {
 
     await expect(
         zuriVotingContract
-          .createElection("election 1", 2, "desc goes here ...", ["Candidate 1", "Candidate 2"], 1)
+          .createElection("election 1", "desc goes here ...", ["Candidate 1", "Candidate 2"], 1)
     ).to.emit(zuriVotingContract, "BallotCreated");
   });
 

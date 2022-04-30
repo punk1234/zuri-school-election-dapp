@@ -244,7 +244,7 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         uint256 numHours
     ) public isDirectorOrTeacher {
 
-       require(_choices.length > 1, "choice must be 2 at list");
+       require(_choices.length > 1, "choice must be atleast 2");
         uint256 _num_choices = _choices.length;
         uint _id = electionCount;
         uint expirationTime = numHours * (60*60);
