@@ -7,22 +7,19 @@ import "@nomiclabs/hardhat-etherscan";
 
 dotenv.config();
 
-const { API_URL, PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env;
+const { API_URL, PRIVATE_KEY } = process.env;
 
 module.exports = {
     solidity: {
         version: "0.8.7", 
     },
-    defaultNetwork: "rinkeby",
+    defaultNetwork: "mumbai",
     networks: {
         hardhat: {},
-        rinkeby: {
+        mumbai: {
             url: API_URL,
             accounts: [`${PRIVATE_KEY}`]
         },
-    },
-    etherscan: {
-        apiKey: ETHERSCAN_API_KEY
     },
     mocha: { timeout: 80000 }
 };
