@@ -114,19 +114,19 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         * @notice add students to the system
         * @dev add students to the system from a list of addresses and names
     */
-    // function addStudents(address[] memory _students, string[] memory _names) external isChairperson {
-    //     require(_names.length > 0, "0 names");
-    //     require(_students.length > 0, "0 addresses");
-    //     require(_students.length == _names.length, "names != addresses");
+    function addStudents(address[] memory _students, string[] memory _names) external isChairperson {
+        require(_names.length > 0, "0 names");
+        require(_students.length > 0, "0 addresses");
+        require(_students.length == _names.length, "names != addresses");
 
-    //     for(uint256 i = 0; i < _students.length; i++) {
-    //         require(bytes(voters[_students[i]].name).length == 0, "student already exist");
-    //         Voter memory _voter = Voter(_names[i], true, Stakeholder.STUDENT);
-    //         _addVoter(_students[i], _voter);
-    //     }
+        for(uint256 i = 0; i < _students.length; i++) {
+            require(bytes(voters[_students[i]].name).length == 0, "student already exist");
+            Voter memory _voter = Voter(_names[i], true, Stakeholder.STUDENT);
+            _addVoter(_students[i], _voter);
+        }
 
        
-    // }
+    }
     
 
     // @function that is used to create a teacher voter
