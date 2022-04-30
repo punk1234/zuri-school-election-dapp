@@ -10,10 +10,14 @@ export default function Election() {
     stopElection,
     chairmanAddress,
     compileResults,
+    getTimeleft,
     castVote,
   } = useContext(electionContext);
   const { address } = useContext(providerSignerContext);
   const displayElection = viewElectionResponse.map((val) => {
+    // let timeLeft
+    // getTimeleft(val.id).then(res => timeLeft = res).catch(err => console.log(err, "time"))
+    // console.log('time lift', timeLeft)
     return (
       <div key={val.id} className="col-4 mt-2 ">
         <div className="card shadow-sm border-0">

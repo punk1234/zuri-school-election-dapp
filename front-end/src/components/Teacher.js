@@ -28,15 +28,12 @@ export default function TeacherDirector() {
   const handleElectionCreation = async (e) => {
     e.preventDefault();
     const proposals = electionDetails.proposalName.split(",");
-    //remove this
-    const proposalNumber = proposals.length;
     console.log(proposals);
     try {
       setLoading(true);
       const contract = await getProviderContractOrSignerContract(true);
       let tx = await contract.createElection(
         electionDetails.name,
-        proposalNumber,
         electionDetails.description,
         proposals,
         electionDetails.hours
@@ -53,6 +50,8 @@ export default function TeacherDirector() {
         }]
         })
       //listening for event emited
+      
+      
       contract.on("BallotCreated", (id, name, expireTime) => {
         setLoading(false);
         console.log("ballot created", id.toNumber(), name, expireTime.toNumber());
@@ -63,13 +62,13 @@ export default function TeacherDirector() {
       setElectionDetails({});
     } catch (err) {
       setLoading(false);
-      const {message} = err.error
-        let errorMsg = message.split(':')[1]
-        setGeneralError(errorMsg)
-        // setGeneralError(prevState => {
-        //   return [...prevState, errorMsg]
-        // })
-        console.log(errorMsg)
+      try {
+          const { message } = err.error;
+          let errorMsg = message.split(":")[1];
+          setGeneralError(errorMsg);
+        } catch (error) {
+          console.log(err);
+        }
     }
   };
 
