@@ -25,4 +25,6 @@ abstract contract VotingEvents {
     event BanVoter(string name, address _voter);
     event UnbanVoter(string name, address _voter);
 
+    event ChairmanChanged(string name, address _chairman);
+
 }
