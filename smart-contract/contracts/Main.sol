@@ -75,9 +75,8 @@ contract ZuriSchoolVoting is VotingEvents, VotingAccess {
         emit DirectorCreated("chairperson", msg.sender);
     }
 
-
     //to change the  chairman
-    function changeChairmanship(address _addr)external isChairperson returns(bool){
+    function changeChairmanship(address _addr) external isChairperson returns(bool) {
         chairperson = _addr;
         return true;
     }
